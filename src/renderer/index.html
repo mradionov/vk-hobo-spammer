@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VK Hobo Spammer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>VK Hobo Spammer</h1>
+  <hr />
+  <div data-loader>
+    Loading...
+  </div>
+  <div class="hidden" data-page="auth">
+    <div>You need to authorize with your VK account in order to send messages</div>
+    <button data-authorize>
+      Authorize
+    </button>
+  </div>
+  <div class="hidden" data-page="friend">
+    Friends
+    <ul data-friend-list></ul>
+  </div>
+  <script src="index.js"></script>
+</body>
+</html>
