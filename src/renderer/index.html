@@ -3,24 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <title>VK Hobo Spammer</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="components/header/header.css">
 </head>
 <body>
-  <h1>VK Hobo Spammer</h1>
-  <hr />
-  <div data-loader>
-    Loading...
+  <div class="header">
+    <div class="title">
+      VK Hobo Spammer
+    </div>
+    <div class="profile hidden" data-header-profile>
+      <img class="profile-photo" data-header-profile-photo />
+      <div class="profile-name" data-header-profile-name>
+        ...
+      </div>
+      <button class="profile-logout" data-header-profile-logout>
+        Logout
+      </button>
+    </div>
   </div>
-  <div class="hidden" data-page="auth">
-    <div>You need to authorize with your VK account in order to send messages</div>
-    <button data-authorize>
-      Authorize
-    </button>
+  <div class="container">
+    <div class="hidden" data-auth-page>
+      <p>You need to authorize with your VK account in order to send messages</p>
+      <button class="button" data-auth-page-authorize>
+        Authorize
+      </button>
+    </div>
+    <div class="hidden" data-friend-page>
+      Friends
+      <ul data-friend-list></ul>
+      <textarea data-message-text>Булочка в тесте</textarea>
+      <button data-message-send>
+        Send
+      </button>
+    </div>
   </div>
-  <div class="hidden" data-page="friend">
-    Friends
-    <ul data-friend-list></ul>
-  </div>
+  <script src="lib/EventEmitter.js"></script>
+  <script src="components/header/header.js"></script>
+  <script src="components/authPage/authPage.js"></script>
+  <script src="components/friendPage/friendPage.js"></script>
   <script src="index.js"></script>
 </body>
 </html>

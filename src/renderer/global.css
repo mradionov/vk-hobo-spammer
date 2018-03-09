@@ -1,0 +1,31 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Helvetica Neue, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.container {
+  padding: 20px;
+}
+
+.button {
+  color: #fff;
+  background: #5181b8;
+  border: 0;
+  border-radius: 4px;
+  padding: 7px 16px 8px;
+}
+
+.button:hover {
+  cursor: pointer;
+  background: #5b88bd;
+}

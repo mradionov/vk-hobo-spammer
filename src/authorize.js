@@ -8,7 +8,7 @@ const REDIRECT_URI = 'https://oauth.vk.com/blank.html';
 module.exports = () => {
   const queryParams = {
     client_id: '6397528',
-    scope: 'friends',
+    scope: 'friends,messages',
     redirect_uri: REDIRECT_URI,
     display: 'page',
     v: '5.73',
@@ -31,10 +31,15 @@ module.exports = () => {
       const hashClean = hash.slice(1, hash.length);
       const hashParams = qs.parse(hashClean);
 
+      if (hashParams.error !== undefined) {
+        reject(hashParams);
+        window.close();
+        return;
+      }
+
       const token = hashParams.access_token;
 
       resolve(token);
-
       window.close();
     });
   });

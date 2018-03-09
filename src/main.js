@@ -12,24 +12,37 @@ electron.app.on('ready', () => {
   const windowUrl = `file://${__dirname}/renderer/index.html`;
   window = new electron.BrowserWindow();
   window.loadURL(windowUrl);
+  window.maximize();
   window.webContents.openDevTools();
 });
 
 electron.ipcMain.on('hobo:ready', async () => {
-  console.log('ready');
   await cache.load();
   const token = cache.get('token');
 
-  console.log({ token });
-
-  window.webContents.send('hobo:token', token);
+  if (token === undefined) {
+    window.webContents.send('hobo:auth/login/guest');
+  } else {
+    window.webContents.send('hobo:auth/login/success', token);
+  }
 });
 
-electron.ipcMain.on('hobo:authorize', async () => {
-  const token = await authorize();
+electron.ipcMain.on('hobo:auth/login/request', async () => {
+  try {
+    const token = await authorize();
 
-  cache.set('token', token);
+    cache.set('token', token);
+    await cache.save();
+
+    window.webContents.send('hobo:auth/login/success', token);
+  } catch (err) {
+    window.webContents.send('hobo:auth/login/failure', err);
+  }
+});
+
+electron.ipcMain.on('hobo:auth/logout/request', async () => {
+  cache.remove('token');
   await cache.save();
 
-  window.webContents.send('hobo:token', token);
+  window.webContents.send('hobo:auth/logout/success');
 });

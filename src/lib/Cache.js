@@ -14,6 +14,10 @@ class Cache {
     this.data[key] = value;
   }
 
+  remove(key) {
+    delete this.data[key];
+  }
+
   load() {
     return new Promise((resolve, reject) => {
       fs.readFile(this.path, 'utf8', (err, serializedData) => {
