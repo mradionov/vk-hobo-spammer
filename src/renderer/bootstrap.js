@@ -1,0 +1,4 @@
+window.vhs = {
+  components: {},
+  lib: {},
+};

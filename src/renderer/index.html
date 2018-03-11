@@ -5,6 +5,7 @@
   <title>VK Hobo Spammer</title>
   <link rel="stylesheet" href="global.css">
   <link rel="stylesheet" href="components/header/header.css">
+  <link rel="stylesheet" href="components/jobPage/jobPage.css">
 </head>
 <body>
   <div class="header">
@@ -28,19 +29,38 @@
         Authorize
       </button>
     </div>
-    <div class="hidden" data-friend-page>
-      Friends
-      <ul data-friend-list></ul>
-      <textarea data-message-text>Булочка в тесте</textarea>
-      <button data-message-send>
-        Send
-      </button>
+    <div class="job hidden" data-job-page>
+      <div class="job-friend-list">
+        <h3>Friends
+        <button class="button" data-add-all>Add all</button></h3>
+        <ul data-friend-list></ul>
+      </div>
+      <div class="job-send-list">
+        <h3>Send to</h3>
+        <ul data-send-list></ul>
+      </div>
+      <div class="job-message">
+        <h3>Message</h3>
+        <textarea class="job-message-input" data-message-text></textarea>
+        <input class="job-random" data-random placeholder="Job Random ID" value="1" />
+        <div class="job-controls">
+          <button class="button" data-send>
+            Send
+          </button>
+          <button class="button" data-reset>
+            Reset
+          </button>
+        </div>
+      </div>
     </div>
   </div>
+  <script src="bootstrap.js"></script>
   <script src="lib/EventEmitter.js"></script>
+  <script src="lib/Request.js"></script>
+  <script src="lib/VKApi.js"></script>
   <script src="components/header/header.js"></script>
   <script src="components/authPage/authPage.js"></script>
-  <script src="components/friendPage/friendPage.js"></script>
-  <script src="index.js"></script>
+  <script src="components/jobPage/jobPage.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>

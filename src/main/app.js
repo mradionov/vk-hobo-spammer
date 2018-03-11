@@ -9,9 +9,9 @@ const cache = new Cache(CACHE_PATH);
 let window;
 
 electron.app.on('ready', () => {
-  const windowUrl = `file://${__dirname}/renderer/index.html`;
+  const url = `file://${__dirname}/../renderer/index.html`;
   window = new electron.BrowserWindow();
-  window.loadURL(windowUrl);
+  window.loadURL(url);
   window.maximize();
   window.webContents.openDevTools();
 });
