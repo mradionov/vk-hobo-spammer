@@ -12,8 +12,8 @@ electron.app.on('ready', () => {
   const url = `file://${__dirname}/../renderer/index.html`;
   window = new electron.BrowserWindow();
   window.loadURL(url);
-  window.maximize();
-  window.webContents.openDevTools();
+  // window.maximize();
+  // window.webContents.openDevTools();
 });
 
 electron.ipcMain.on('hobo:ready', async () => {
