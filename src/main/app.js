@@ -2,7 +2,8 @@ const electron = require('electron');
 
 const authorize = require('./authorize');
 const Cache = require('./lib/Cache');
-const { CACHE_PATH } = require('./config');
+const { isDev }  = require('../config/env');
+const { CACHE_PATH } = require('../config/config');
 
 const cache = new Cache(CACHE_PATH);
 
@@ -12,8 +13,11 @@ electron.app.on('ready', () => {
   const url = `file://${__dirname}/../renderer/index.html`;
   window = new electron.BrowserWindow();
   window.loadURL(url);
-  // window.maximize();
-  // window.webContents.openDevTools();
+
+  if (isDev()) {
+    window.maximize();
+    window.webContents.openDevTools();
+  }
 });
 
 electron.ipcMain.on('hobo:ready', async () => {

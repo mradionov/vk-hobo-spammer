@@ -56,7 +56,7 @@
     }
   }
 
-  VKApi.ERROR_TOKEN_IP_CHANGED = 5;
+  VKApi.TOKEN_ERROR = 5;
 
   window.vhs.lib.VKApi = VKApi;
 })();

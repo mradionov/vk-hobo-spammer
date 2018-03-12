@@ -32,7 +32,7 @@ electron.ipcRenderer.on('hobo:auth/login/success', async (ev, token) => {
     const profile = await api.getProfile();
     window.vhs.components.header.login(profile);
   } catch (err) {
-    if (err.error_code === window.vhs.lib.VKApi.ERROR_TOKEN_IP_CHANGED) {
+    if (err.error_code === window.vhs.lib.VKApi.TOKEN_ERROR) {
       alert(err.error_msg);
       electron.ipcRenderer.send('hobo:auth/logout/request');
     }
