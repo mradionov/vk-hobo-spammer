@@ -1,4 +1,0 @@
-window.vhs = {
-  components: {},
-  lib: {},
-};

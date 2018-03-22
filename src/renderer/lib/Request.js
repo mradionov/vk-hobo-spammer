@@ -1,56 +1,53 @@
-(() => {
-  const qs = require('querystring');
+import queryStringHelper from 'querystring';
 
-  const defaults = (object = {}, source = {}) => {
-    const result = {};
+import { defaultsDeep } from 'lodash';
 
-    Object.keys(object).forEach((key) => {
-      result[key] = object[key];
+const METHOD_GET = 'GET';
+
+class Request {
+  constructor(defaultOptions = {}) {
+    this.defaultOptions = defaultsDeep(defaultOptions, {
+      base: '',
+      method: METHOD_GET,
+      params: {},
     });
 
-    Object.keys(source).forEach((key) => {
-      if (result[key] === undefined) {
-        result[key] = source[key];
-      }
-    });
-
-    return result;
-  };
-
-  class Request {
-    constructor(options = {}) {
-      this.options = defaults(options, {
-        base: '',
-        params: {},
-      });
-    }
-
-    appendParams(params = {}) {
-      Object.keys(params).forEach((key) => {
-        this.options.params[key] = params[key];
-      });
-    }
-
-    async get(pathname, requestOptions = {}) {
-      const options = defaults(requestOptions, this.options);
-      const params = defaults(options.params, this.options.params);
-
-      let url = [
-        options.base,
-        pathname,
-      ].join('/');
-
-      const queryString = qs.stringify(params);
-      if (queryString.length > 0) {
-        url += `?${queryString}`;
-      }
-
-      const response = await fetch(url);
-      const data = await response.json();
-
-      return data;
-    }
+    this.optionsInterceptors = [];
   }
 
-  window.vhs.lib.Request = Request;
-})();
+  addOptionsInterceptor(interceptor) {
+    this.optionsInterceptors.push(interceptor);
+  }
+
+  async get(pathname, options) {
+    return this.request(METHOD_GET, pathname, options);
+  }
+
+  async request(method, pathname, requestOptions = {}) {
+    let options = defaultsDeep({}, requestOptions, this.defaultOptions, {
+      method,
+      pathname,
+    });
+
+    this.optionsInterceptors.forEach((interceptor) => {
+      options = interceptor(options);
+    });
+
+    let url = [options.base, options.pathname].join('/');
+    const queryString = queryStringHelper.stringify(options.params);
+    if (queryString.length > 0) {
+      url += `?${queryString}`;
+    }
+
+    const fetchOptions = {
+      method: options.method,
+    };
+
+    const response = await fetch(url, fetchOptions);
+    const data = await response.json();
+
+    return data;
+  }
+}
+
+export default Request;

@@ -8,19 +8,34 @@
     "type": "git",
     "url": "https://github.com/mradionov/vk-hobo-spammer"
   },
-  "main": "src/main/app.js",
+  "main": "src/main/main.js",
   "scripts": {
+    "build:renderer": "webpack --config webpack/renderer.config.js",
+    "watch:renderer": "webpack --config webpack/renderer.config.js --watch",
+    "build": "npm run build:renderer",
+    "watch": "npm run watch:renderer",
     "start": "NODE_ENV=development electron .",
-    "build": "node ./packager/package.js",
+    "package": "node ./packager/package.js",
+    "lint": "eslint packager src webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "electron": "^1.8.3"
+    "electron": "^1.8.3",
+    "lodash": "^4.17.5",
+    "vue": "^2.5.16",
+    "vue-router": "^3.0.1"
   },
   "devDependencies": {
+    "css-loader": "^0.28.11",
     "electron-packager": "^11.1.0",
     "eslint": "^4.18.2",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.9.0"
+    "eslint-import-resolver-webpack": "^0.8.4",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-vue": "^4.3.0",
+    "vue-loader": "^14.2.1",
+    "vue-template-compiler": "^2.5.16",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.12"
   }
 }
