@@ -6,5 +6,5 @@ const secrets = require('./secrets');
 
 const userDataPath = electron.app.getPath('userData');
 
-exports.CACHE_PATH = path.join(userDataPath, 'cache.json');
+exports.CACHE_PATH = path.join(userDataPath, 'app', 'cache.json');
 exports.VK_APP_ID = secrets.VK_APP_ID;

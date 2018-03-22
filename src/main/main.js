@@ -40,6 +40,7 @@ ipcMain.on('app:auth/login/request', async () => {
 
     window.webContents.send('app:auth/login/success', token);
   } catch (err) {
+    console.error(err);
     window.webContents.send('app:auth/login/failure', err);
   }
 });

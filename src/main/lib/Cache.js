@@ -1,4 +1,6 @@
-const fs = require('fs');
+const pathHelper = require('path');
+
+const fs = require('./fs');
 
 class Cache {
   constructor(path) {
@@ -18,38 +20,25 @@ class Cache {
     delete this.data[key];
   }
 
-  load() {
-    return new Promise((resolve, reject) => {
-      fs.readFile(this.path, 'utf8', (err, serializedData) => {
-        if (err) {
-          if (err.code === 'ENOENT') {
-            // It's fine if file does not exist
-            resolve();
-            return;
-          }
+  async load() {
+    try {
+      this.data = await fs.readJSON(this.path, {});
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        // It's fine if file does not exist, it will be created on save
+        return;
+      }
 
-          reject(err);
-          return;
-        }
-
-        this.data = JSON.parse(serializedData);
-
-        resolve();
-      });
-    });
+      throw err;
+    }
   }
 
-  save() {
-    return new Promise((resolve, reject) => {
-      const serializedData = JSON.stringify(this.data);
-      fs.writeFile(this.path, serializedData, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
+  async save() {
+    // Make sure directory for cache exists
+    const dirPath = pathHelper.dirname(this.path);
+    await fs.makeDir(dirPath);
+
+    return fs.writeJSON(this.path, this.data);
   }
 }
 
