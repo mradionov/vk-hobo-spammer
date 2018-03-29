@@ -10,7 +10,7 @@
 <script>
 import { ipcRenderer } from 'electron';
 
-import Button from '../components/Button';
+import Button from '../basic/Button';
 
 export default {
   components: {

@@ -4,7 +4,7 @@
       :profile="profile"
       @logout="onLogout"
     />
-    <div class="content">
+    <div :class="$style.content">
       <router-view />
     </div>
   </div>
@@ -35,8 +35,13 @@ export default {
 
       try {
         this.profile = await this.api.getProfile();
-        this.$router.push('/job');
+        this.$router.push('/jobs');
       } catch (err) {
+        if (err.error_code === 5) {
+          window.alert(err.error_msg);
+          this.onLogout();
+          return;
+        }
         console.error(err);
       }
     });
@@ -44,7 +49,7 @@ export default {
     ipcRenderer.on('app:auth/logout/success', () => {
       this.store.token = null;
       this.profile = null;
-      this.$router.push('/');
+      this.$router.push('/auth');
     });
   },
 
@@ -58,26 +63,20 @@ export default {
 </script>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 html, body {
   margin: 0;
   padding: 0;
 }
 
 body {
+  background: #edeef0;
   font-family: Helvetica Neue, sans-serif;
   font-size: 13px;
   font-weight: 400;
-}
-
-h3 {
-  font-size: 18px;
-  margin: 0 0 15px 0;
-}
-
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
 }
 
 textarea {
@@ -85,10 +84,21 @@ textarea {
   font-size: 13px;
   padding: 5px;
 }
+
+hr {
+  border: 0;
+  border-top: 1px solid #e7e8ec;
+  height: 0px;
+  margin: 20px auto 20px;
+}
 </style>
 
-<style scoped>
+<style module>
 .content {
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+  margin: 20px;
   padding: 20px;
 }
 </style>

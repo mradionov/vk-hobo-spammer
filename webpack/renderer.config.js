@@ -15,6 +15,12 @@ const config = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
+        options: {
+          cssModules: {
+            camelCase: true,
+            localIdentName: '[name]__[local]__[hash:base64:5]',
+          },
+        },
       },
     ],
   },

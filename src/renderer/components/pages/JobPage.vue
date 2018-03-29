@@ -44,9 +44,9 @@
 </template>
 
 <script>
-import Button from '../components/Button';
-import FriendList from '../components/FriendList';
-import SendList from '../components/SendList';
+import Button from '../basic/Button';
+import FriendList from '../presenters/FriendList';
+import SendList from '../presenters/SendList';
 
 export default {
 

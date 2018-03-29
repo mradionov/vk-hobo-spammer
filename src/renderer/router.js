@@ -1,9 +1,11 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import AuthPage from './pages/AuthPage';
-import LandingPage from './pages/LandingPage';
-import JobPage from './pages/JobPage';
+import AuthPage from './components/pages/AuthPage';
+import LandingPage from './components/pages/LandingPage';
+import JobIndexPage from './components/pages/JobIndexPage';
+import JobCreatePage from './components/pages/JobCreatePage';
+import JobEditPage from './components/pages/JobEditPage';
 
 Vue.use(VueRouter);
 
@@ -17,21 +19,30 @@ const routes = [
     component: AuthPage,
   },
   {
-    path: '/job',
-    component: JobPage,
+    path: '/jobs',
+    component: JobIndexPage,
+  },
+  {
+    path: '/jobs/create',
+    component: JobCreatePage,
+  },
+  {
+    path: '/jobs/:jobId/edit',
+    name: 'jobsEdit',
+    component: JobEditPage,
   },
 ];
 
 function createRouter(store) {
   const router = new VueRouter({ routes });
 
-  const allowedPaths = [
+  const anonymousPaths = [
     '/',
     '/auth',
   ];
 
   router.beforeEach((from, to, next) => {
-    if (store.token === null && !allowedPaths.includes(from.path)) {
+    if (store.token === null && !anonymousPaths.includes(from.path)) {
       next('/');
       return;
     }

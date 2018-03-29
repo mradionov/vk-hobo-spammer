@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { ipcRenderer } from 'electron';
 import { merge } from 'lodash';
 
-import App from './components/App';
+import App from './components/app/App';
 
 import Request from './lib/Request';
 import VKApi from './lib/VKApi';

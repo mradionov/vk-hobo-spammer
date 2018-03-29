@@ -3,8 +3,8 @@ const pathHelper = require('path');
 const fs = require('./fs');
 
 class Cache {
-  constructor(path) {
-    this.path = path;
+  constructor(options = { path: '' }) {
+    this.path = options.path;
     this.data = {};
   }
 
