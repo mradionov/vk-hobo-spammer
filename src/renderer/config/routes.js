@@ -5,8 +5,8 @@ const routes = {
   auth: {
     path: () => '/auth',
   },
-  jobIndex: {
-    path: () => '/jobs',
+  messageIndex: {
+    path: () => '/messages',
   },
 };
 

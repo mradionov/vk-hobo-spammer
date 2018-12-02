@@ -12,6 +12,20 @@
         />
       </div>
     </div>
+    <div :class="$style.group ">
+      <div :class="$style.label">
+        Text:
+      </div>
+      <div :class="$style.field">
+        <textarea
+          :class="$style.input"
+          v-model.trim="fields.text"
+          cols="60"
+          rows="15"
+        >
+        </textarea>
+      </div>
+    </div>
     <hr />
     <div :class="$style.group ">
       <div :class="$style.label" />
@@ -38,14 +52,17 @@ export default {
       type: Object,
       default: () => ({
         title: '',
+        text: '',
       }),
     },
   },
 
   data() {
     return {
-      fields: this.initialValues || {},
-      isSubmitting: false,
+      fields: this.initialValues || {
+        title: '',
+        message: '',
+      },
     };
   },
 

@@ -1,17 +1,17 @@
 <template>
   <div>
     <PageTitle>
-      Jobs
+      Messages
       <ButtonLink
         slot="actions"
-        to="/jobs/create"
+        to="/message/create"
       >
         Create
       </ButtonLink>
     </PageTitle>
     <table
       :class="$style.table"
-      v-if="hasJobs"
+      v-if="hasMessages"
     >
       <thead>
         <tr :class="$style.row">
@@ -24,29 +24,50 @@
           <th>
             Created at
           </th>
+          <th>
+            Actions
+          </th>
+          <th>
+            Posts
+          </th>
         </tr>
       </thead>
       <tbody>
         <tr
           :class="$style.row"
-          v-for="job in jobs"
+          v-for="message in messages"
         >
-          <td>{{job.id}}</td>
-          <td>{{job.title}}</td>
-          <td>{{job.createdAt | date}}</td>
+          <td>{{message.id}}</td>
+          <td>{{message.title}}</td>
+          <td>{{message.createdAt | date}}</td>
           <td>
-            <ButtonLink :to="{ name: 'jobsEdit', params: { jobId: job.id } }">
+            <ButtonLink
+              :to="{
+                name: 'messageEdit',
+                params: { messageId: message.id }
+              }"
+            >
               Edit
             </ButtonLink>
-            <Button @click="onRemove(job)">
+            <Button @click="onRemove(message)">
               Remove
             </Button>
+          </td>
+          <td>
+            <ButtonLink
+              :to="{
+                name: 'messagePosts',
+                params: { messageId: message.id }
+              }"
+            >
+              Posts
+            </ButtonLink>
           </td>
         </tr>
       </tbody>
     </table>
-    <div :class="$style.empty" v-if="!hasJobs">
-      No jobs yet
+    <div :class="$style.empty" v-if="!hasMessages">
+      No messages yet
     </div>
   </div>
 </template>
@@ -76,13 +97,13 @@ export default {
 
   data() {
     return {
-      jobs: [],
+      messages: [],
     };
   },
 
   computed: {
-    hasJobs() {
-      return this.jobs.length > 0;
+    hasMessages() {
+      return this.messages.length > 0;
     },
   },
 
@@ -93,20 +114,20 @@ export default {
   methods: {
 
     fetch() {
-      ipcRenderer.send('app:jobs/index/request');
-      ipcRenderer.once('app:jobs/index/success', (ev, jobs) => {
-        this.jobs = jobs;
+      ipcRenderer.send('app:messages/index/request');
+      ipcRenderer.once('app:messages/index/success', (ev, messages) => {
+        this.messages = messages;
       });
     },
 
-    onRemove(job) {
+    onRemove(message) {
       const isRemoveConfirmed = window.confirm('Are you sure?');
       if (!isRemoveConfirmed) {
         return;
       }
 
-      ipcRenderer.send('app:jobs/remove/request', job.id);
-      ipcRenderer.once('app:jobs/remove/success', () => {
+      ipcRenderer.send('app:messages/remove/request', message.id);
+      ipcRenderer.once('app:messages/remove/success', () => {
         this.fetch();
       });
     },

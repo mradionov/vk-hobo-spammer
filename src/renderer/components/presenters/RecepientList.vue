@@ -1,16 +1,19 @@
 <template>
-  <ul class="list">
-    <li
-      class="item"
-      v-for="user in users"
-      @click="onItemClick(user)"
-    >
-      <span class="id">
-        {{user.id}}
-      </span>
-      {{user.first_name}} {{user.last_name}}
-    </li>
-  </ul>
+  <div>
+    <h3>Recepients</h3>
+    <ul class="list">
+      <li
+        class="item"
+        v-for="user in users"
+        @click="onItemClick(user)"
+      >
+        <span class="id">
+          {{user.id}}
+        </span>
+        {{user.first_name}} {{user.last_name}}
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -36,13 +39,15 @@ export default {
 .list {
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 0 20px 0 0;
+  height: 300px;
+  overflow-y: auto;
 }
 
 .item {
   cursor: pointer;
   border-radius: 4px;
-  padding: 4px 8px;
+  padding: 4px 8px 4px 0;
 }
 
 .item:hover {

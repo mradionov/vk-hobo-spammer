@@ -3,9 +3,10 @@ import VueRouter from 'vue-router';
 
 import AuthPage from './components/pages/AuthPage';
 import LandingPage from './components/pages/LandingPage';
-import JobIndexPage from './components/pages/JobIndexPage';
-import JobCreatePage from './components/pages/JobCreatePage';
-import JobEditPage from './components/pages/JobEditPage';
+import MessageIndexPage from './components/pages/MessageIndexPage';
+import MessageCreatePage from './components/pages/MessageCreatePage';
+import MessageEditPage from './components/pages/MessageEditPage';
+import PostIndexPage from './components/pages/PostIndexPage';
 
 Vue.use(VueRouter);
 
@@ -19,17 +20,22 @@ const routes = [
     component: AuthPage,
   },
   {
-    path: '/jobs',
-    component: JobIndexPage,
+    path: '/messages',
+    component: MessageIndexPage,
   },
   {
-    path: '/jobs/create',
-    component: JobCreatePage,
+    path: '/message/create',
+    component: MessageCreatePage,
   },
   {
-    path: '/jobs/:jobId/edit',
-    name: 'jobsEdit',
-    component: JobEditPage,
+    path: '/message/:messageId/edit',
+    name: 'messageEdit',
+    component: MessageEditPage,
+  },
+  {
+    path: '/message/:messageId/posts',
+    name: 'messagePosts',
+    component: PostIndexPage,
   },
 ];
 

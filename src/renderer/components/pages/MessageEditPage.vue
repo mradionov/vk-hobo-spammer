@@ -1,13 +1,13 @@
 <template>
   <div>
     <PageTitle>
-      Edit Job
+      Edit Message
       <div slot="actions">
         <BackButton />
       </div>
     </PageTitle>
-    <JobForm
-      :initialValues="job"
+    <MessageForm
+      :initialValues="message"
       @submit="onSubmit"
     />
   </div>
@@ -17,20 +17,20 @@
 import { ipcRenderer } from 'electron';
 
 import BackButton from '../basic/BackButton';
-import JobForm from '../forms/JobForm';
+import MessageForm from '../forms/MessageForm';
 import PageTitle from '../presenters/PageTitle';
 
 export default {
 
   components: {
     BackButton,
-    JobForm,
+    MessageForm,
     PageTitle,
   },
 
   data() {
     return {
-      job: null,
+      message: null,
     };
   },
 
@@ -41,18 +41,18 @@ export default {
   methods: {
 
     fetch() {
-      ipcRenderer.send('app:jobs/get/request', this.$route.params.jobId);
-      ipcRenderer.once('app:jobs/get/success', (ev, job) => {
-        this.job = job;
+      ipcRenderer.send('app:messages/get/request', this.$route.params.messageId);
+      ipcRenderer.once('app:messages/get/success', (ev, message) => {
+        this.message = message;
       });
     },
 
     onSubmit(data) {
-      ipcRenderer.send('app:jobs/update/request', data.id, data);
-      ipcRenderer.once('app:jobs/update/success', () => {
-        this.$router.push('/jobs');
+      ipcRenderer.send('app:messages/update/request', data.id, data);
+      ipcRenderer.once('app:messages/update/success', () => {
+        this.$router.push('/messages');
       });
-      ipcRenderer.once('app:jobs/update/failure', (ev, err) => {
+      ipcRenderer.once('app:messages/update/failure', (ev, err) => {
         console.error(err);
       });
     },

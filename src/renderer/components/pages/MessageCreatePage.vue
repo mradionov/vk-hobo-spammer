@@ -1,12 +1,12 @@
 <template>
   <div>
     <PageTitle>
-      Create Job
+      Create Message
       <div slot="actions">
         <BackButton />
       </div>
     </PageTitle>
-    <JobForm
+    <MessageForm
       @submit="onSubmit"
     />
   </div>
@@ -17,7 +17,7 @@ import { ipcRenderer } from 'electron';
 
 import BackButton from '../basic/BackButton';
 import Button from '../basic/Button';
-import JobForm from '../forms/JobForm';
+import MessageForm from '../forms/MessageForm';
 import PageTitle from '../presenters/PageTitle';
 
 export default {
@@ -25,18 +25,18 @@ export default {
   components: {
     BackButton,
     Button,
-    JobForm,
+    MessageForm,
     PageTitle,
   },
 
   methods: {
 
     onSubmit(data) {
-      ipcRenderer.send('app:jobs/create/request', data);
-      ipcRenderer.once('app:jobs/create/success', () => {
-        this.$router.push('/jobs');
+      ipcRenderer.send('app:messages/create/request', data);
+      ipcRenderer.once('app:messages/create/success', () => {
+        this.$router.push('/messages');
       });
-      ipcRenderer.once('app:jobs/create/failure', (ev, err) => {
+      ipcRenderer.once('app:messages/create/failure', (ev, err) => {
         console.error(err);
       });
     },
@@ -45,7 +45,3 @@ export default {
 
 };
 </script>
-
-<style module>
-
-</style>

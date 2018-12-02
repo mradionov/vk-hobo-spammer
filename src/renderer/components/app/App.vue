@@ -35,7 +35,7 @@ export default {
 
       try {
         this.profile = await this.api.getProfile();
-        this.$router.push('/jobs');
+        this.$router.push('/messages');
       } catch (err) {
         if (err.error_code === 5) {
           window.alert(err.error_msg);
