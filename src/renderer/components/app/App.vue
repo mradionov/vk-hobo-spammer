@@ -4,6 +4,11 @@
       :profile="profile"
       @logout="onLogout"
     />
+    <div :class="$style.navigation">
+      <NavBackButton
+        v-if="$route.meta.canBack"
+      />
+    </div>
     <div :class="$style.content">
       <router-view />
     </div>
@@ -13,12 +18,14 @@
 <script>
 import { ipcRenderer } from 'electron';
 
+import NavBackButton from './NavBackButton';
 import TheHeader from './TheHeader';
 
 export default {
 
   components: {
     TheHeader,
+    NavBackButton,
   },
 
   inject: ['api', 'store'],
@@ -35,7 +42,7 @@ export default {
 
       try {
         this.profile = await this.api.getProfile();
-        this.$router.push('/messages');
+        this.$router.replace('/messages');
       } catch (err) {
         if (err.error_code === 5) {
           window.alert(err.error_msg);
@@ -94,11 +101,17 @@ hr {
 </style>
 
 <style module>
+.navigation {
+  margin: 10px 0 0 20px;
+  min-height: 30px;
+  padding-left: 20px;
+}
+
 .content {
   background: #fff;
   border-radius: 2px;
   box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
-  margin: 20px;
+  margin: 10px 20px 20px 20px;
   padding: 20px;
 }
 </style>

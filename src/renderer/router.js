@@ -7,6 +7,7 @@ import MessageIndexPage from './components/pages/MessageIndexPage';
 import MessageCreatePage from './components/pages/MessageCreatePage';
 import MessageEditPage from './components/pages/MessageEditPage';
 import PostIndexPage from './components/pages/PostIndexPage';
+import PostCreatePage from './components/pages/PostCreatePage';
 
 Vue.use(VueRouter);
 
@@ -24,18 +25,27 @@ const routes = [
     component: MessageIndexPage,
   },
   {
-    path: '/message/create',
+    path: '/messages/create',
     component: MessageCreatePage,
+    meta: { canBack: true },
   },
   {
-    path: '/message/:messageId/edit',
-    name: 'messageEdit',
+    path: '/messages/:messageId/edit',
+    name: 'messagesEdit',
     component: MessageEditPage,
+    meta: { canBack: true },
   },
   {
-    path: '/message/:messageId/posts',
-    name: 'messagePosts',
+    path: '/messages/:messageId/posts',
+    name: 'messagesPosts',
     component: PostIndexPage,
+    meta: { canBack: true },
+  },
+  {
+    path: '/message/:messageId/posts/create',
+    name: 'postsCreate',
+    component: PostCreatePage,
+    meta: { canBack: true },
   },
 ];
 

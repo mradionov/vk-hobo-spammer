@@ -2,9 +2,6 @@
   <div>
     <PageTitle>
       Edit Message
-      <div slot="actions">
-        <BackButton />
-      </div>
     </PageTitle>
     <MessageForm
       :initialValues="message"
@@ -16,14 +13,12 @@
 <script>
 import { ipcRenderer } from 'electron';
 
-import BackButton from '../basic/BackButton';
 import MessageForm from '../forms/MessageForm';
 import PageTitle from '../presenters/PageTitle';
 
 export default {
 
   components: {
-    BackButton,
     MessageForm,
     PageTitle,
   },

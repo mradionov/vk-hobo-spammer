@@ -4,9 +4,9 @@
       Messages
       <ButtonLink
         slot="actions"
-        to="/message/create"
+        to="/messages/create"
       >
-        Create
+        Create message
       </ButtonLink>
     </PageTitle>
     <table
@@ -42,8 +42,9 @@
           <td>{{message.createdAt | date}}</td>
           <td>
             <ButtonLink
+              :class="$style.editButton"
               :to="{
-                name: 'messageEdit',
+                name: 'messagesEdit',
                 params: { messageId: message.id }
               }"
             >
@@ -56,11 +57,11 @@
           <td>
             <ButtonLink
               :to="{
-                name: 'messagePosts',
+                name: 'messagesPosts',
                 params: { messageId: message.id }
               }"
             >
-              Posts
+              Open posts
             </ButtonLink>
           </td>
         </tr>
@@ -149,6 +150,10 @@ export default {
 
 .idCell {
   width: 40px;
+}
+
+.editButton {
+  margin-right: 5px;
 }
 
 .empty {
