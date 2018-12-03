@@ -4,18 +4,18 @@ import { merge } from 'lodash';
 
 import App from './components/app/App';
 
-import Request from './lib/Request';
+import HTTPClient from './lib/HTTPClient';
 import VKApi from './lib/VKApi';
 
 import createRouter from './router';
 
-const request = new Request({
-  base: 'https://api.vk.com/method',
+const http = new HTTPClient({
+  baseURL: 'https://api.vk.com/method',
   params: {
     v: '5.73',
   },
 });
-const api = new VKApi(request);
+const api = new VKApi(http);
 
 const store = {
   token: null,
@@ -33,7 +33,7 @@ const app = new Vue({
   },
 
   created() {
-    request.addOptionsInterceptor((options) => {
+    http.addOptionsInterceptor((options) => {
       if (store.token === null) {
         return options;
       }

@@ -42,7 +42,7 @@ export default {
 
       try {
         this.profile = await this.api.getProfile();
-        this.$router.replace('/messages');
+        this.$router.replace('/message/index');
       } catch (err) {
         if (err.error_code === 5) {
           window.alert(err.error_msg);

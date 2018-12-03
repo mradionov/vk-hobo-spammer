@@ -1,32 +1,8 @@
 <template>
   <div>
     <div :class="$style.group">
-      <div :class="$style.label">
-        Title:
-      </div>
-      <div :class="$style.field">
-        <input
-          :class="$style.input"
-          type="text"
-          v-model.trim="fields.title"
-        />
-      </div>
+
     </div>
-    <div :class="$style.group">
-      <div :class="$style.label">
-        Text:
-      </div>
-      <div :class="$style.field">
-        <textarea
-          :class="$style.input"
-          v-model.trim="fields.text"
-          cols="60"
-          rows="15"
-        >
-        </textarea>
-      </div>
-    </div>
-    <hr />
     <div :class="$style.group ">
       <div :class="$style.label" />
       <div :class="$style.field">
@@ -51,8 +27,7 @@ export default {
     initialValues: {
       type: Object,
       default: () => ({
-        title: '',
-        text: '',
+        userIds: [],
       }),
     },
   },
@@ -60,24 +35,21 @@ export default {
   data() {
     return {
       fields: this.initialValues || {
-        title: '',
-        message: '',
+        userIds: [],
       },
     };
   },
 
   watch: {
     initialValues(initialValues) {
-      this.fields = initialValues;
+      this.fields = initialValuesl
     },
   },
 
   methods: {
-
     onSave() {
       this.$emit('submit', this.fields);
     },
-
   },
 
 };
@@ -93,13 +65,5 @@ export default {
   text-align: right;
   padding: 6px 12px 7px 0;
   width: 100px;
-}
-
-.input {
-  border: 1px solid #d3d9de;
-  border-radius: 2px;
-  color: #000;
-  margin: 0;
-  padding: 3px 5px;
 }
 </style>

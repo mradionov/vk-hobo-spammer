@@ -4,10 +4,10 @@ import { defaultsDeep } from 'lodash';
 
 const METHOD_GET = 'GET';
 
-class Request {
+class HTTPClient {
   constructor(defaultOptions = {}) {
     this.defaultOptions = defaultsDeep(defaultOptions, {
-      base: '',
+      baseURL: '',
       method: METHOD_GET,
       params: {},
     });
@@ -33,7 +33,7 @@ class Request {
       options = interceptor(options);
     });
 
-    let url = [options.base, options.pathname].join('/');
+    let url = [options.baseURL, options.pathname].join('/');
     const queryString = queryStringHelper.stringify(options.params);
     if (queryString.length > 0) {
       url += `?${queryString}`;
@@ -50,4 +50,4 @@ class Request {
   }
 }
 
-export default Request;
+export default HTTPClient;

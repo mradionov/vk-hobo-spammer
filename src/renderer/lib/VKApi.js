@@ -1,10 +1,10 @@
 class VKApi {
-  constructor(request) {
-    this.request = request;
+  constructor(http) {
+    this.http = http;
   }
 
   async getFriends() {
-    const data = await this.request.get('friends.get', {
+    const data = await this.http.get('friends.get', {
       params: {
         fields: 'first_name,last_name',
         order: 'name',
@@ -21,7 +21,7 @@ class VKApi {
   }
 
   async getProfile() {
-    const data = await this.request.get('users.get', {
+    const data = await this.http.get('users.get', {
       params: {
         fields: 'first_name,last_name,photo_50',
       },
@@ -38,7 +38,7 @@ class VKApi {
   }
 
   async sendMessage(peerId, randomId, message) {
-    const data = await this.request.get('messages.send', {
+    const data = await this.http.get('messages.send', {
       params: {
         peer_id: peerId,
         random_id: randomId,

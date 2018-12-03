@@ -27,11 +27,11 @@ export default {
   methods: {
 
     onSubmit(data) {
-      ipcRenderer.send('app:messages/create/request', data);
-      ipcRenderer.once('app:messages/create/success', () => {
-        this.$router.push('/messages');
+      ipcRenderer.send('app:message/create/request', data);
+      ipcRenderer.once('app:message/create/success', () => {
+        this.$router.push('/message/index');
       });
-      ipcRenderer.once('app:messages/create/failure', (ev, err) => {
+      ipcRenderer.once('app:message/create/failure', (ev, err) => {
         console.error(err);
       });
     },

@@ -1,20 +1,22 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 
 const VKAuthService = require('./services/VKAuthService');
-const MessageService = require('./services/MessageService');
+const MessageRepository = require('./repositories/MessageRepository');
+const PostRepository = require('./repositories/PostRepository');
 const Cache = require('./lib/Cache');
 const { isDev } = require('./config/env');
 const {
-  CACHE_PATH,
-  MESSAGES_INDEX_PATH, MESSAGES_DIR_PATH,
+  CACHE_PATH, MESSAGE_INDEX_PATH, POST_INDEX_PATH,
 } = require('./config/paths');
 const { VK_APP_ID } = require('./config/secrets');
 
 const cache = new Cache({ path: CACHE_PATH });
 const authService = new VKAuthService({ appId: VK_APP_ID });
-const messageService = new MessageService({
-  indexPath: MESSAGES_INDEX_PATH,
-  dirPath: MESSAGES_DIR_PATH,
+const messageRepository = new MessageRepository({
+  indexPath: MESSAGE_INDEX_PATH,
+});
+const postRepository = new PostRepository({
+  indexPath: POST_INDEX_PATH,
 });
 
 let window;
@@ -62,47 +64,62 @@ ipcMain.on('app:auth/logout/request', async () => {
   window.webContents.send('app:auth/logout/success');
 });
 
-ipcMain.on('app:messages/index/request', async () => {
-  const messages = await messageService.getIndex();
-  window.webContents.send('app:messages/index/success', messages);
+ipcMain.on('app:message/index/request', async () => {
+  const messages = await messageRepository.getIndex();
+  window.webContents.send('app:message/index/success', messages);
 });
 
-ipcMain.on('app:messages/get/request', async (ev, messageId) => {
+ipcMain.on('app:message/get/request', async (ev, messageId) => {
   try {
-    const message = await messageService.get(messageId);
-    window.webContents.send('app:messages/get/success', message);
+    const message = await messageRepository.get(messageId);
+    window.webContents.send('app:message/get/success', message);
   } catch (err) {
     console.error(err);
-    window.webContents.send('app:messages/get/failure', err);
+    window.webContents.send('app:message/get/failure', err);
   }
 });
 
-ipcMain.on('app:messages/create/request', async (ev, data) => {
+ipcMain.on('app:message/create/request', async (ev, data) => {
   try {
-    const message = await messageService.create(data);
-    window.webContents.send('app:messages/create/success', message);
+    const message = await messageRepository.create(data);
+    window.webContents.send('app:message/create/success', message);
   } catch (err) {
     console.error(err);
-    window.webContents.send('app:messages/create/failure', err);
+    window.webContents.send('app:message/create/failure', err);
   }
 });
 
-ipcMain.on('app:messages/update/request', async (ev, messageId, data) => {
+ipcMain.on('app:message/update/request', async (ev, messageId, data) => {
   try {
-    const message = await messageService.update(messageId, data);
-    window.webContents.send('app:messages/update/success', message);
+    const message = await messageRepository.update(messageId, data);
+    window.webContents.send('app:message/update/success', message);
   } catch (err) {
     console.error(err);
-    window.webContents.send('app:messages/update/failure', err);
+    window.webContents.send('app:message/update/failure', err);
   }
 });
 
-ipcMain.on('app:messages/remove/request', async (ev, messageId) => {
+ipcMain.on('app:message/remove/request', async (ev, messageId) => {
   try {
-    await messageService.remove(messageId);
-    window.webContents.send('app:messages/remove/success');
+    await messageRepository.remove(messageId);
+    window.webContents.send('app:message/remove/success');
   } catch (err) {
     console.error(err);
-    window.webContents.send('app:messages/remove/failure');
+    window.webContents.send('app:message/remove/failure');
+  }
+});
+
+ipcMain.on('app:post/index/request', async (ev, messageId) => {
+  const posts = await postRepository.getIndexByMessage(messageId);
+  window.webContents.send('app:post/index/success', posts);
+});
+
+ipcMain.on('app:post/create/request', async (ev, data) => {
+  try {
+    const post = await postRepository.create(data);
+    window.webContents.send('app:post/create/success', post);
+  } catch (err) {
+    console.error(err);
+    window.webContents.send('app:post/create/failure', err);
   }
 });

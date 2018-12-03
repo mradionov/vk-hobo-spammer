@@ -36,18 +36,18 @@ export default {
   methods: {
 
     fetch() {
-      ipcRenderer.send('app:messages/get/request', this.$route.params.messageId);
-      ipcRenderer.once('app:messages/get/success', (ev, message) => {
+      ipcRenderer.send('app:message/get/request', this.$route.params.messageId);
+      ipcRenderer.once('app:message/get/success', (ev, message) => {
         this.message = message;
       });
     },
 
     onSubmit(data) {
-      ipcRenderer.send('app:messages/update/request', data.id, data);
-      ipcRenderer.once('app:messages/update/success', () => {
-        this.$router.push('/messages');
+      ipcRenderer.send('app:message/update/request', data.id, data);
+      ipcRenderer.once('app:message/update/success', () => {
+        this.$router.push('/message');
       });
-      ipcRenderer.once('app:messages/update/failure', (ev, err) => {
+      ipcRenderer.once('app:message/update/failure', (ev, err) => {
         console.error(err);
       });
     },

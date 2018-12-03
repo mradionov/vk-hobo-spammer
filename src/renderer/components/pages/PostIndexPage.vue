@@ -6,7 +6,7 @@
         <ButtonLink
           slot="actions"
           :to="{
-            name: 'postsCreate',
+            name: 'postCreate',
             params: { messageId: $route.params.messageId }
           }"
         >
@@ -20,12 +20,21 @@
     >
       <thead>
         <tr :class="$style.row">
-          ID
+          <th>
+            ID
+          </th>
+          <th>
+            Created at
+          </th>
         </tr>
       </thead>
       <tbody>
-        <tr :class="$style.row">
-          <td>1</td>
+        <tr
+          :class="$style.row"
+          v-for="post in posts"
+        >
+          <td>{{post.id}}</td>
+          <td>{{post.createdAt | date}}</td>
         </tr>
       </tbody>
     </table>
@@ -36,6 +45,8 @@
 </template>
 
 <script>
+import { ipcRenderer } from 'electron';
+
 import ButtonLink from '../basic/ButtonLink';
 import PageTitle from '../presenters/PageTitle';
 
@@ -46,14 +57,39 @@ export default {
     PageTitle,
   },
 
+  filters: {
+    date(value) {
+      const date = new Date(value);
+      const formattedDate = date.toLocaleString('ru-RU');
+      return formattedDate;
+    },
+  },
+
+  data() {
+    return {
+      posts: [],
+    };
+  },
+
   computed: {
     hasPosts() {
-      return false;
+      return this.posts.length > 0;
     },
   },
 
   mounted() {
-    console.log(this.$router);
+    this.fetch();
+  },
+
+  methods: {
+    fetch() {
+      const messageId = this.$route.params.messageId;
+      ipcRenderer.send('app:post/index/request', messageId);
+      ipcRenderer.once('app:post/index/success', (ev, posts) => {
+        this.posts = posts;
+      });
+    },
+
   },
 
 };

@@ -4,7 +4,7 @@
       Messages
       <ButtonLink
         slot="actions"
-        to="/messages/create"
+        to="/message/create"
       >
         Create message
       </ButtonLink>
@@ -44,7 +44,7 @@
             <ButtonLink
               :class="$style.editButton"
               :to="{
-                name: 'messagesEdit',
+                name: 'messageEdit',
                 params: { messageId: message.id }
               }"
             >
@@ -57,11 +57,11 @@
           <td>
             <ButtonLink
               :to="{
-                name: 'messagesPosts',
+                name: 'postIndex',
                 params: { messageId: message.id }
               }"
             >
-              Open posts
+              Show posts
             </ButtonLink>
           </td>
         </tr>
@@ -108,15 +108,15 @@ export default {
     },
   },
 
-  async mounted() {
+  mounted() {
     this.fetch();
   },
 
   methods: {
 
     fetch() {
-      ipcRenderer.send('app:messages/index/request');
-      ipcRenderer.once('app:messages/index/success', (ev, messages) => {
+      ipcRenderer.send('app:message/index/request');
+      ipcRenderer.once('app:message/index/success', (ev, messages) => {
         this.messages = messages;
       });
     },
@@ -127,8 +127,8 @@ export default {
         return;
       }
 
-      ipcRenderer.send('app:messages/remove/request', message.id);
-      ipcRenderer.once('app:messages/remove/success', () => {
+      ipcRenderer.send('app:message/remove/request', message.id);
+      ipcRenderer.once('app:message/remove/success', () => {
         this.fetch();
       });
     },
