@@ -1,8 +1,16 @@
 <template>
   <div>
     <div :class="$style.group">
-
+      <FriendList
+        :users="friends"
+        @select="onFriendSelect"
+      />
+      <RecepientList
+        :users="recepients"
+        @select="onRecepientSelect"
+      />
     </div>
+    <hr />
     <div :class="$style.group ">
       <div :class="$style.label" />
       <div :class="$style.field">
@@ -16,11 +24,15 @@
 
 <script>
 import Button from '../basic/Button';
+import FriendList from '../presenters/FriendList';
+import RecepientList from '../presenters/RecepientList';
 
 export default {
 
   components: {
     Button,
+    FriendList,
+    RecepientList,
   },
 
   props: {
@@ -32,11 +44,15 @@ export default {
     },
   },
 
+  inject: ['api'],
+
   data() {
     return {
       fields: this.initialValues || {
         userIds: [],
       },
+      friends: [],
+      recepients: [],
     };
   },
 
@@ -46,9 +62,35 @@ export default {
     },
   },
 
+  async mounted() {
+    try {
+      this.friends = await this.api.getFriends();
+
+      this.friends.forEach((user) => {
+        if (this.fields.userIds.includes(user.id)) {
+          this.recepients.push(user);
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
   methods: {
     onSave() {
       this.$emit('submit', this.fields);
+    },
+    onFriendSelect(selectedUser) {
+      if (this.fields.userIds.includes(selectedUser.id)) {
+        return;
+      }
+
+      this.recepients.push(selectedUser);
+      this.fields.userIds.push(selectedUser.id);
+    },
+    onRecepientSelect(selectedUser) {
+      this.recepients = this.recepients.filter(user => user.id !== selectedUser.id);
+      this.fields.userIds = this.fields.userIds.filter(id => id !== selectedUser.id);
     },
   },
 

@@ -27,6 +27,9 @@
             Created at
           </th>
           <th>
+            Users
+          </th>
+          <th>
             Actions
           </th>
         </tr>
@@ -38,6 +41,7 @@
         >
           <td>{{post.id}}</td>
           <td>{{post.createdAt | date}}</td>
+          <td>{{post.userIds.length}}</td>
           <td>
             <ButtonLink
               :class="$style.editButton"
