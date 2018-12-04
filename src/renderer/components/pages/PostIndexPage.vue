@@ -26,6 +26,9 @@
           <th>
             Created at
           </th>
+          <th>
+            Actions
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -35,6 +38,23 @@
         >
           <td>{{post.id}}</td>
           <td>{{post.createdAt | date}}</td>
+          <td>
+            <ButtonLink
+              :class="$style.editButton"
+              :to="{
+                name: 'postEdit',
+                params: {
+                  messageId: $route.params.messageId,
+                  postId: post.id,
+                },
+              }"
+            >
+              Edit
+            </ButtonLink>
+            <Button @click="onRemove(post)">
+              Remove
+            </Button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -47,12 +67,14 @@
 <script>
 import { ipcRenderer } from 'electron';
 
+import Button from '../basic/Button';
 import ButtonLink from '../basic/ButtonLink';
 import PageTitle from '../presenters/PageTitle';
 
 export default {
 
   components: {
+    Button,
     ButtonLink,
     PageTitle,
   },
@@ -83,13 +105,24 @@ export default {
 
   methods: {
     fetch() {
-      const messageId = this.$route.params.messageId;
+      const messageId = Number(this.$route.params.messageId);
       ipcRenderer.send('app:post/index/request', messageId);
       ipcRenderer.once('app:post/index/success', (ev, posts) => {
         this.posts = posts;
       });
     },
 
+    onRemove(post) {
+      const isRemoveConfirmed = window.confirm('Are you sure?');
+      if (!isRemoveConfirmed) {
+        return;
+      }
+
+      ipcRenderer.send('app:post/remove/request', post.id);
+      ipcRenderer.once('app:post/remove/success', () => {
+        this.fetch();
+      });
+    },
   },
 
 };
@@ -103,6 +136,10 @@ export default {
 
 .row {
   border-bottom: 1px solid #e7e8ec;
+}
+
+.editButton {
+  margin-right: 5px;
 }
 
 .empty {

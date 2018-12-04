@@ -29,7 +29,7 @@ export default {
     };
   },
 
-  async mounted() {
+  mounted() {
     this.fetch();
   },
 
@@ -45,7 +45,7 @@ export default {
     onSubmit(data) {
       ipcRenderer.send('app:message/update/request', data.id, data);
       ipcRenderer.once('app:message/update/success', () => {
-        this.$router.push('/message');
+        this.$router.push('/message/index');
       });
       ipcRenderer.once('app:message/update/failure', (ev, err) => {
         console.error(err);
@@ -56,7 +56,3 @@ export default {
 
 };
 </script>
-
-<style module>
-
-</style>

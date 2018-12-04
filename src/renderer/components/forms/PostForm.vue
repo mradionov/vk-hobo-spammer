@@ -42,7 +42,7 @@ export default {
 
   watch: {
     initialValues(initialValues) {
-      this.fields = initialValuesl
+      this.fields = initialValues;
     },
   },
 

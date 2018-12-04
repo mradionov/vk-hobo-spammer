@@ -8,6 +8,7 @@ import MessageCreatePage from './components/pages/MessageCreatePage';
 import MessageEditPage from './components/pages/MessageEditPage';
 import PostIndexPage from './components/pages/PostIndexPage';
 import PostCreatePage from './components/pages/PostCreatePage';
+import PostEditPage from './components/pages/PostEditPage';
 
 Vue.use(VueRouter);
 
@@ -45,6 +46,12 @@ const routes = [
     path: '/message/:messageId/post/create',
     name: 'postCreate',
     component: PostCreatePage,
+    meta: { canBack: true },
+  },
+  {
+    path: '/message/:messageId/post/:postId/edit',
+    name: 'postEdit',
+    component: PostEditPage,
     meta: { canBack: true },
   },
 ];

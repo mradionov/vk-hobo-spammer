@@ -114,6 +114,16 @@ ipcMain.on('app:post/index/request', async (ev, messageId) => {
   window.webContents.send('app:post/index/success', posts);
 });
 
+ipcMain.on('app:post/get/request', async (ev, postId) => {
+  try {
+    const post = await postRepository.get(postId);
+    window.webContents.send('app:post/get/success', post);
+  } catch (err) {
+    console.error(err);
+    window.webContents.send('app:post/get/failure', err);
+  }
+});
+
 ipcMain.on('app:post/create/request', async (ev, data) => {
   try {
     const post = await postRepository.create(data);
@@ -121,5 +131,25 @@ ipcMain.on('app:post/create/request', async (ev, data) => {
   } catch (err) {
     console.error(err);
     window.webContents.send('app:post/create/failure', err);
+  }
+});
+
+ipcMain.on('app:post/update/request', async (ev, postId, data) => {
+  try {
+    const post = await postRepository.update(postId, data);
+    window.webContents.send('app:post/update/success', post);
+  } catch (err) {
+    console.error(err);
+    window.webContents.send('app:post/update/failure', err);
+  }
+});
+
+ipcMain.on('app:post/remove/request', async (ev, postId) => {
+  try {
+    await postRepository.remove(postId);
+    window.webContents.send('app:post/remove/success');
+  } catch (err) {
+    console.error(err);
+    window.webContents.send('app:post/remove/failure');
   }
 });
