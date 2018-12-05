@@ -74,8 +74,6 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron';
-
 import Button from '../basic/Button';
 import ButtonLink from '../basic/ButtonLink';
 import PageTitle from '../presenters/PageTitle';
@@ -87,6 +85,8 @@ export default {
     ButtonLink,
     PageTitle,
   },
+
+  inject: ['ipc'],
 
   filters: {
     date(value) {
@@ -115,8 +115,8 @@ export default {
   methods: {
 
     fetch() {
-      ipcRenderer.send('app:message/index/request');
-      ipcRenderer.once('app:message/index/success', (ev, messages) => {
+      this.ipc.send('app:message/index/request');
+      this.ipc.once('app:message/index/success', (ev, messages) => {
         this.messages = messages;
       });
     },
@@ -127,8 +127,8 @@ export default {
         return;
       }
 
-      ipcRenderer.send('app:message/remove/request', message.id);
-      ipcRenderer.once('app:message/remove/success', () => {
+      this.ipc.send('app:message/remove/request', message.id);
+      this.ipc.once('app:message/remove/success', () => {
         this.fetch();
       });
     },

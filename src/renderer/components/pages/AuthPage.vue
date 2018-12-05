@@ -8,8 +8,6 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron';
-
 import Button from '../basic/Button';
 
 export default {
@@ -17,11 +15,13 @@ export default {
     Button,
   },
 
+  inject: ['ipc'],
+
   created() {
-    ipcRenderer.once('app:auth/login/success', async (ev, accessToken) => {
+    this.ipc.once('app:auth/login/success', async (ev, accessToken) => {
       this.$store.commit('login', { accessToken });
     });
-    ipcRenderer.once('app:auth/login/failure', (ev, err) => {
+    this.ipc.once('app:auth/login/failure', (ev, err) => {
       console.error(err);
       alert('Login failed');
     });
@@ -29,7 +29,7 @@ export default {
 
   methods: {
     authorize() {
-      ipcRenderer.send('app:auth/login/request');
+      this.ipc.send('app:auth/login/request');
     },
   },
 };

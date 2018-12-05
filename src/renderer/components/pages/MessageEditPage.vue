@@ -11,8 +11,6 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron';
-
 import MessageForm from '../forms/MessageForm';
 import PageTitle from '../presenters/PageTitle';
 
@@ -22,6 +20,8 @@ export default {
     MessageForm,
     PageTitle,
   },
+
+  inject: ['ipc'],
 
   data() {
     return {
@@ -36,18 +36,18 @@ export default {
   methods: {
 
     fetch() {
-      ipcRenderer.send('app:message/get/request', this.$route.params.messageId);
-      ipcRenderer.once('app:message/get/success', (ev, message) => {
+      this.ipc.send('app:message/get/request', this.$route.params.messageId);
+      this.ipc.once('app:message/get/success', (ev, message) => {
         this.message = message;
       });
     },
 
     onSubmit(data) {
-      ipcRenderer.send('app:message/update/request', data.id, data);
-      ipcRenderer.once('app:message/update/success', () => {
+      this.ipc.send('app:message/update/request', data.id, data);
+      this.ipc.once('app:message/update/success', () => {
         this.$router.push('/message/index');
       });
-      ipcRenderer.once('app:message/update/failure', (ev, err) => {
+      this.ipc.once('app:message/update/failure', (ev, err) => {
         console.error(err);
       });
     },

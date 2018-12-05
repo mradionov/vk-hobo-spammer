@@ -65,7 +65,7 @@ function createRouter(store) {
   ];
 
   router.beforeEach((from, to, next) => {
-    if (store.token === null && !anonymousPaths.includes(from.path)) {
+    if (!store.getters.isAuthenticated && !anonymousPaths.includes(from.path)) {
       next('/');
       return;
     }

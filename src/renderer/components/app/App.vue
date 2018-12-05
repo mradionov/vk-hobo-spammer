@@ -16,8 +16,6 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron';
-
 import NavBackButton from './NavBackButton';
 import TheHeader from './TheHeader';
 
@@ -28,7 +26,7 @@ export default {
     NavBackButton,
   },
 
-  inject: ['api'],
+  inject: ['api', 'ipc'],
 
   data() {
     return {
@@ -37,7 +35,7 @@ export default {
   },
 
   created() {
-    ipcRenderer.on('app:auth/login/success', async (ev, accessToken) => {
+    this.ipc.on('app:auth/login/success', async (ev, accessToken) => {
       this.$store.commit('login', { accessToken });
 
       try {
@@ -53,7 +51,7 @@ export default {
       }
     });
 
-    ipcRenderer.on('app:auth/logout/success', () => {
+    this.ipc.on('app:auth/logout/success', () => {
       this.$store.commit('logout');
       this.profile = null;
       this.$router.push('/auth');
@@ -62,7 +60,7 @@ export default {
 
   methods: {
     onLogout() {
-      ipcRenderer.send('app:auth/logout/request');
+      this.ipc.send('app:auth/logout/request');
     },
   },
 

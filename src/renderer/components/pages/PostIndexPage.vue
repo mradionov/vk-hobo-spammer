@@ -69,8 +69,6 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron';
-
 import Button from '../basic/Button';
 import ButtonLink from '../basic/ButtonLink';
 import PageTitle from '../presenters/PageTitle';
@@ -82,6 +80,8 @@ export default {
     ButtonLink,
     PageTitle,
   },
+
+  inject: ['ipc'],
 
   filters: {
     date(value) {
@@ -110,8 +110,8 @@ export default {
   methods: {
     fetch() {
       const messageId = Number(this.$route.params.messageId);
-      ipcRenderer.send('app:post/index/request', messageId);
-      ipcRenderer.once('app:post/index/success', (ev, posts) => {
+      this.ipc.send('app:post/index/request', messageId);
+      this.ipc.once('app:post/index/success', (ev, posts) => {
         this.posts = posts;
       });
     },
@@ -122,8 +122,8 @@ export default {
         return;
       }
 
-      ipcRenderer.send('app:post/remove/request', post.id);
-      ipcRenderer.once('app:post/remove/success', () => {
+      this.ipc.send('app:post/remove/request', post.id);
+      this.ipc.once('app:post/remove/success', () => {
         this.fetch();
       });
     },

@@ -11,8 +11,6 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron';
-
 import PostForm from '../forms/PostForm';
 import PageTitle from '../presenters/PageTitle';
 
@@ -22,6 +20,8 @@ export default {
     PostForm,
     PageTitle,
   },
+
+  inject: ['ipc'],
 
   data() {
     return {
@@ -37,8 +37,8 @@ export default {
     fetch() {
       const { messageId, postId } = this.$route.params;
 
-      ipcRenderer.send('app:post/get/request', messageId, postId);
-      ipcRenderer.once('app:post/get/success', (ev, post) => {
+      this.ipc.send('app:post/get/request', messageId, postId);
+      this.ipc.once('app:post/get/success', (ev, post) => {
         this.post = post;
       });
     },
@@ -46,8 +46,8 @@ export default {
     onSubmit(data) {
       const { messageId } = this.$route.params;
 
-      ipcRenderer.send('app:post/update/request', data.id, data);
-      ipcRenderer.once('app:post/update/success', () => {
+      this.ipc.send('app:post/update/request', data.id, data);
+      this.ipc.once('app:post/update/success', () => {
         this.$router.push({
           name: 'postIndex',
           params: {
@@ -55,7 +55,7 @@ export default {
           },
         });
       });
-      ipcRenderer.once('app:post/update/failure', (ev, err) => {
+      this.ipc.once('app:post/update/failure', (ev, err) => {
         console.error(err);
       });
     },

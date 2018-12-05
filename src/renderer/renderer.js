@@ -1,10 +1,10 @@
-import { ipcRenderer } from 'electron';
 import Vue from 'vue';
 import { merge } from 'lodash';
 
 import App from './components/app/App';
 
 import HTTPClient from './lib/HTTPClient';
+import IPCClient from './lib/IPCClient';
 import VKApi from './lib/VKApi';
 
 import createStore from './store/store';
@@ -17,6 +17,7 @@ const http = new HTTPClient({
   },
 });
 const api = new VKApi(http);
+const ipc = new IPCClient();
 
 const store = createStore();
 const router = createRouter(store);
@@ -28,6 +29,7 @@ const app = new Vue({
 
   provide: {
     api,
+    ipc,
   },
 
   created() {
@@ -45,13 +47,13 @@ const app = new Vue({
       });
     });
 
-    ipcRenderer.on('app:auth/login/guest', () => {
+    ipc.on('app:auth/login/guest', () => {
       router.push('/auth');
     });
   },
 
   mounted() {
-    ipcRenderer.send('app:renderer/ready');
+    ipc.send('app:renderer/ready');
   },
 
   render: h => h(App),
