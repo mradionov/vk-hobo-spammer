@@ -2,7 +2,7 @@
   <div>
     <TheHeader
       :profile="profile"
-      @logout="onLogout"
+      @logout="logout"
     />
     <div :class="$style.navigation">
       <NavBackButton
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+
 import NavBackButton from './NavBackButton';
 import TheHeader from './TheHeader';
 
@@ -36,7 +38,7 @@ export default {
 
   created() {
     this.ipc.on('app:auth/login/success', async (ev, accessToken) => {
-      this.$store.commit('login', { accessToken });
+      this.setAccessToken(accessToken);
 
       try {
         this.profile = await this.api.getProfile();
@@ -44,7 +46,7 @@ export default {
       } catch (err) {
         if (err.error_code === 5) {
           window.alert(err.error_msg);
-          this.onLogout();
+          this.logout();
           return;
         }
         console.error(err);
@@ -52,14 +54,18 @@ export default {
     });
 
     this.ipc.on('app:auth/logout/success', () => {
-      this.$store.commit('logout');
+      this.clearAccessToken();
       this.profile = null;
       this.$router.push('/auth');
     });
   },
 
   methods: {
-    onLogout() {
+    ...mapMutations('session', [
+      'setAccessToken',
+      'clearAccessToken',
+    ]),
+    logout() {
       this.ipc.send('app:auth/logout/request');
     },
   },

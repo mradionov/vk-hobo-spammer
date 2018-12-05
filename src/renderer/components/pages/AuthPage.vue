@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+
 import Button from '../basic/Button';
 
 export default {
@@ -16,16 +18,6 @@ export default {
   },
 
   inject: ['ipc'],
-
-  created() {
-    this.ipc.once('app:auth/login/success', async (ev, accessToken) => {
-      this.$store.commit('login', { accessToken });
-    });
-    this.ipc.once('app:auth/login/failure', (ev, err) => {
-      console.error(err);
-      alert('Login failed');
-    });
-  },
 
   methods: {
     authorize() {

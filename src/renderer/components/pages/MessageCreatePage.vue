@@ -4,12 +4,14 @@
       Create Message
     </PageTitle>
     <MessageForm
-      @submit="onSubmit"
+      @submit="submit"
     />
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+
 import Button from '../basic/Button';
 import MessageForm from '../forms/MessageForm';
 import PageTitle from '../presenters/PageTitle';
@@ -25,15 +27,13 @@ export default {
   inject: ['ipc'],
 
   methods: {
+    ...mapMutations('messages', [
+      'create',
+    ]),
 
-    onSubmit(data) {
-      this.ipc.send('app:message/create/request', data);
-      this.ipc.once('app:message/create/success', () => {
-        this.$router.push('/message/index');
-      });
-      this.ipc.once('app:message/create/failure', (ev, err) => {
-        console.error(err);
-      });
+    submit(data) {
+      this.create(data);
+      this.$router.push('/message/index');
     },
 
   },

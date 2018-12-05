@@ -50,7 +50,7 @@
             >
               Edit
             </ButtonLink>
-            <Button @click="onRemove(message)">
+            <Button @click="confirmRemove(message)">
               Remove
             </Button>
           </td>
@@ -74,6 +74,8 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex';
+
 import Button from '../basic/Button';
 import ButtonLink from '../basic/ButtonLink';
 import PageTitle from '../presenters/PageTitle';
@@ -96,41 +98,27 @@ export default {
     },
   },
 
-  data() {
-    return {
-      messages: [],
-    };
-  },
-
   computed: {
+    ...mapGetters('messages', {
+      messages: 'all',
+    }),
     hasMessages() {
       return this.messages.length > 0;
     },
   },
 
-  mounted() {
-    this.fetch();
-  },
-
   methods: {
+    ...mapMutations('messages', [
+      'remove',
+    ]),
 
-    fetch() {
-      this.ipc.send('app:message/index/request');
-      this.ipc.once('app:message/index/success', (ev, messages) => {
-        this.messages = messages;
-      });
-    },
-
-    onRemove(message) {
+    confirmRemove(message) {
       const isRemoveConfirmed = window.confirm('Are you sure?');
       if (!isRemoveConfirmed) {
         return;
       }
 
-      this.ipc.send('app:message/remove/request', message.id);
-      this.ipc.once('app:message/remove/success', () => {
-        this.fetch();
-      });
+      this.remove(message.id);
     },
 
   },

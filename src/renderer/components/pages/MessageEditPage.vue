@@ -5,12 +5,14 @@
     </PageTitle>
     <MessageForm
       :initialValues="message"
-      @submit="onSubmit"
+      @submit="submit"
     />
   </div>
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex';
+
 import MessageForm from '../forms/MessageForm';
 import PageTitle from '../presenters/PageTitle';
 
@@ -23,6 +25,12 @@ export default {
 
   inject: ['ipc'],
 
+  computed: {
+    ...mapGetters('messages', [
+      'getById',
+    ]),
+  },
+
   data() {
     return {
       message: null,
@@ -30,26 +38,17 @@ export default {
   },
 
   mounted() {
-    this.fetch();
+    this.message = this.getById(this.$route.params.messageId);
   },
 
   methods: {
+    ...mapMutations('messages', [
+      'update',
+    ]),
 
-    fetch() {
-      this.ipc.send('app:message/get/request', this.$route.params.messageId);
-      this.ipc.once('app:message/get/success', (ev, message) => {
-        this.message = message;
-      });
-    },
-
-    onSubmit(data) {
-      this.ipc.send('app:message/update/request', data.id, data);
-      this.ipc.once('app:message/update/success', () => {
-        this.$router.push('/message/index');
-      });
-      this.ipc.once('app:message/update/failure', (ev, err) => {
-        console.error(err);
-      });
+    submit(data) {
+      this.update(data);
+      this.$router.push('/message/index');
     },
 
   },

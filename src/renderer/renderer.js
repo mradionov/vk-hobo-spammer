@@ -22,6 +22,11 @@ const ipc = new IPCClient();
 const store = createStore();
 const router = createRouter(store);
 
+store.subscribe((mutation) => {
+  console.log('update', mutation);
+  console.log(store.state);
+});
+
 const app = new Vue({
 
   store,
