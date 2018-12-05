@@ -16,20 +16,20 @@
     "build": "npm run build:renderer",
     "watch": "npm run watch:renderer",
     "start": "NODE_ENV=development electron .",
-    "package": "node ./packager/package.js",
+    "package": "node ./package/package.js",
     "lint": "eslint packager src webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "electron": "^1.8.3",
     "lodash": "^4.17.5",
     "mkdirp": "^0.5.1",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
-    "css-loader": "^0.28.11",
-    "electron-packager": "^11.1.0",
+    "css-loader": "^1.0.1",
+    "electron": "^3.0.10",
+    "electron-packager": "^13.0.0",
     "eslint": "^4.18.2",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-import-resolver-webpack": "^0.8.4",
@@ -37,7 +37,7 @@
     "eslint-plugin-vue": "^4.3.0",
     "vue-loader": "^14.2.1",
     "vue-template-compiler": "^2.5.16",
-    "webpack": "^4.1.1",
-    "webpack-cli": "^2.0.12"
+    "webpack": "^4.27.0",
+    "webpack-cli": "^3.1.2"
   }
 }
