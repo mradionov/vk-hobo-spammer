@@ -2,6 +2,7 @@ const queryStringHelper = require('querystring');
 const urlHelper = require('url');
 
 const electron = require('electron');
+const session = electron.session;
 
 const Deferred = require('../lib/Deferred');
 
@@ -28,12 +29,13 @@ class VKAuthService {
 
     const window = new electron.BrowserWindow();
     window.loadURL(url);
-    window.webContents.on('did-get-redirect-request', (event, oldUrl, newUrl) => {
-      if (!newUrl.startsWith(REDIRECT_URI)) {
-        return;
-      }
 
-      const responseUrl = urlHelper.parse(newUrl);
+    const filter = {
+      urls: [REDIRECT_URI],
+    };
+
+    session.defaultSession.webRequest.onCompleted(filter, (details) => {
+      const responseUrl = urlHelper.parse(details.url);
       const { hash } = responseUrl;
       const hashClean = hash.slice(1, hash.length);
       const hashParams = queryStringHelper.parse(hashClean);
