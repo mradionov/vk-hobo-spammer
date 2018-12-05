@@ -1,10 +1,11 @@
 module.exports = {
   extends: [
-    'airbnb-base',
+    'eslint:recommended',
     'plugin:vue/recommended',
   ],
   env: {
-    browser: true
+    browser: true,
+    node: true,
   },
   parserOptions: {
     ecmaVersion: 8,
@@ -15,11 +16,5 @@ module.exports = {
         config: 'webpack/renderer.config.js',
       },
     },
-  },
-  rules: {
-    'import/extensions': ['error', 'always', {
-      'js': 'never',
-      'vue': 'never',
-    }],
   },
 };
