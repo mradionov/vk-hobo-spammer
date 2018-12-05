@@ -28,7 +28,7 @@ export default {
     NavBackButton,
   },
 
-  inject: ['api', 'store'],
+  inject: ['api'],
 
   data() {
     return {
@@ -37,8 +37,8 @@ export default {
   },
 
   created() {
-    ipcRenderer.on('app:auth/login/success', async (ev, token) => {
-      this.store.token = token;
+    ipcRenderer.on('app:auth/login/success', async (ev, accessToken) => {
+      this.$store.commit('login', { accessToken });
 
       try {
         this.profile = await this.api.getProfile();
@@ -54,7 +54,7 @@ export default {
     });
 
     ipcRenderer.on('app:auth/logout/success', () => {
-      this.store.token = null;
+      this.$store.commit('logout');
       this.profile = null;
       this.$router.push('/auth');
     });

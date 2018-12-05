@@ -1,5 +1,5 @@
-import Vue from 'vue';
 import { ipcRenderer } from 'electron';
+import Vue from 'vue';
 import { merge } from 'lodash';
 
 import App from './components/app/App';
@@ -7,6 +7,7 @@ import App from './components/app/App';
 import HTTPClient from './lib/HTTPClient';
 import VKApi from './lib/VKApi';
 
+import createStore from './store/store';
 import createRouter from './router';
 
 const http = new HTTPClient({
@@ -17,30 +18,29 @@ const http = new HTTPClient({
 });
 const api = new VKApi(http);
 
-const store = {
-  token: null,
-};
-
+const store = createStore();
 const router = createRouter(store);
 
 const app = new Vue({
 
+  store,
   router,
 
   provide: {
     api,
-    store,
   },
 
   created() {
     http.addOptionsInterceptor((options) => {
-      if (store.token === null) {
+      const { accessToken } = this.$store.getters;
+
+      if (accessToken === null) {
         return options;
       }
 
       return merge(options, {
         params: {
-          access_token: store.token,
+          access_token: accessToken,
         },
       });
     });
