@@ -1,14 +1,13 @@
 import Vue from 'vue';
-import { merge } from 'lodash';
-
-import App from './components/app/App';
 
 import HTTPClient from './lib/HTTPClient';
 import IPCClient from './lib/IPCClient';
 import VKApi from './lib/VKApi';
 
 import createStore from './store/store';
-import createRouter from './router';
+import createRouter from './router/router';
+
+import App from './components/app/App';
 
 const http = new HTTPClient({
   baseURL: 'https://api.vk.com/method',
@@ -19,13 +18,8 @@ const http = new HTTPClient({
 const api = new VKApi(http);
 const ipc = new IPCClient();
 
-const store = createStore();
+const store = createStore({ ipc, http });
 const router = createRouter(store);
-
-store.subscribe((mutation) => {
-  console.log('update', mutation);
-  console.log(store.state);
-});
 
 const app = new Vue({
 
@@ -35,26 +29,6 @@ const app = new Vue({
   provide: {
     api,
     ipc,
-  },
-
-  created() {
-    http.addOptionsInterceptor((options) => {
-      const { accessToken } = this.$store.getters;
-
-      if (accessToken === null) {
-        return options;
-      }
-
-      return merge(options, {
-        params: {
-          access_token: accessToken,
-        },
-      });
-    });
-
-    ipc.on('app:auth/login/guest', () => {
-      router.push('/auth');
-    });
   },
 
   mounted() {

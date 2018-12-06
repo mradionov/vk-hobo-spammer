@@ -1,16 +1,14 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import AuthPage from './components/pages/AuthPage';
-import LandingPage from './components/pages/LandingPage';
-import MessageIndexPage from './components/pages/MessageIndexPage';
-import MessageCreatePage from './components/pages/MessageCreatePage';
-import MessageEditPage from './components/pages/MessageEditPage';
-import PostIndexPage from './components/pages/PostIndexPage';
-import PostCreatePage from './components/pages/PostCreatePage';
-import PostEditPage from './components/pages/PostEditPage';
-
-Vue.use(VueRouter);
+import AuthPage from '../components/pages/AuthPage';
+import LandingPage from '../components/pages/LandingPage';
+import MessageIndexPage from '../components/pages/MessageIndexPage';
+import MessageCreatePage from '../components/pages/MessageCreatePage';
+import MessageEditPage from '../components/pages/MessageEditPage';
+import PostIndexPage from '../components/pages/PostIndexPage';
+import PostCreatePage from '../components/pages/PostCreatePage';
+import PostEditPage from '../components/pages/PostEditPage';
 
 const routes = [
   {
@@ -57,6 +55,8 @@ const routes = [
 ];
 
 function createRouter(store) {
+  Vue.use(VueRouter);
+
   const router = new VueRouter({ routes });
 
   const anonymousPaths = [

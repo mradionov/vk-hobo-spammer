@@ -88,8 +88,6 @@ export default {
     PageTitle,
   },
 
-  inject: ['ipc'],
-
   filters: {
     date(value) {
       const date = new Date(value);

@@ -24,8 +24,6 @@ export default {
     PageTitle,
   },
 
-  inject: ['ipc'],
-
   methods: {
     ...mapMutations('messages', [
       'create',

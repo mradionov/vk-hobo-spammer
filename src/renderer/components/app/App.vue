@@ -30,33 +30,32 @@ export default {
 
   inject: ['api', 'ipc'],
 
-  data() {
-    return {
-      profile: null,
-    };
+  data: () => ({
+    profile: null,
+  }),
+
+  computed: {
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    },
+  },
+
+  watch: {
+    async isAuthenticated(newIsAuthenticated, oldIsAuthenticated) {
+      if (newIsAuthenticated) {
+        await this.fetchProfile();
+        this.$router.push('/message/index');
+        return;
+      }
+
+      this.resetProfile();
+      this.$router.push('/auth');
+    }
   },
 
   created() {
-    this.ipc.on('app:auth/login/success', async (ev, accessToken) => {
+    this.ipc.on('app:auth/login/success', (ev, accessToken) => {
       this.setAccessToken(accessToken);
-
-      try {
-        this.profile = await this.api.getProfile();
-        this.$router.replace('/message/index');
-      } catch (err) {
-        if (err.error_code === 5) {
-          window.alert(err.error_msg);
-          this.logout();
-          return;
-        }
-        console.error(err);
-      }
-    });
-
-    this.ipc.on('app:auth/logout/success', () => {
-      this.clearAccessToken();
-      this.profile = null;
-      this.$router.push('/auth');
     });
   },
 
@@ -65,8 +64,26 @@ export default {
       'setAccessToken',
       'clearAccessToken',
     ]),
+
+    async fetchProfile() {
+      try {
+        this.profile = await this.api.getProfile();
+      } catch (err) {
+        if (err.error_code === 5) {
+          window.alert(err.error_msg);
+          this.logout();
+          return;
+        }
+        console.error(err);
+      }
+    },
+
+    resetProfile() {
+      this.profile = null;
+    },
+
     logout() {
-      this.ipc.send('app:auth/logout/request');
+      this.clearAccessToken();
     },
   },
 

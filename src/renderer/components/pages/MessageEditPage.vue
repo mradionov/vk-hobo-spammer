@@ -23,19 +23,15 @@ export default {
     PageTitle,
   },
 
-  inject: ['ipc'],
-
   computed: {
     ...mapGetters('messages', [
       'getById',
     ]),
   },
 
-  data() {
-    return {
-      message: null,
-    };
-  },
+  data: () => ({
+    message: null,
+  }),
 
   mounted() {
     this.message = this.getById(this.$route.params.messageId);
