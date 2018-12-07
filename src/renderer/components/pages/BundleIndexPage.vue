@@ -1,22 +1,22 @@
 <template>
   <div>
     <PageTitle>
-      Posts
+      Bundles
       <div slot="actions">
         <ButtonLink
           slot="actions"
           :to="{
-            name: 'postCreate',
+            name: 'bundleCreate',
             params: { messageId: $route.params.messageId }
           }"
         >
-          Create post
+          Create bundle
         </ButtonLink>
       </div>
     </PageTitle>
     <table
       :class="$style.table"
-      v-if="hasPosts"
+      v-if="hasAny"
     >
       <thead>
         <tr :class="$style.row">
@@ -37,40 +37,42 @@
       <tbody>
         <tr
           :class="$style.row"
-          v-for="post in posts"
+          v-for="bundle in bundles"
         >
-          <td>{{post.id}}</td>
-          <td>{{post.createdAt | date}}</td>
-          <td>{{post.userIds.length}}</td>
+          <td>{{bundle.id}}</td>
+          <td>{{bundle.createdAt | date}}</td>
+          <td>{{bundle.userIds.length}}</td>
           <td>
             <ButtonLink
               :class="$style.editButton"
               :to="{
-                name: 'postEdit',
+                name: 'bundleEdit',
                 params: {
                   messageId: $route.params.messageId,
-                  postId: post.id,
+                  bundleId: bundle.id,
                 },
               }"
             >
               Edit
             </ButtonLink>
-            <Button @click="onRemove(post)">
+            <Button @click="confirmRemove(bundle)">
               Remove
             </Button>
           </td>
         </tr>
       </tbody>
     </table>
-    <div :class="$style.empty" v-if="!hasPosts">
-      No posts yet
+    <div :class="$style.empty" v-if="!hasAny">
+      No bundles yet
     </div>
   </div>
 </template>
 
 <script>
-import Button from '../basic/Button';
-import ButtonLink from '../basic/ButtonLink';
+import { mapGetters, mapMutations } from 'vuex';
+
+import Button from '../presenters/Button';
+import ButtonLink from '../presenters/ButtonLink';
 import PageTitle from '../presenters/PageTitle';
 
 export default {
@@ -80,8 +82,6 @@ export default {
     ButtonLink,
     PageTitle,
   },
-
-  inject: ['ipc'],
 
   filters: {
     date(value) {
@@ -93,39 +93,35 @@ export default {
 
   data() {
     return {
-      posts: [],
+      bundles: [],
     };
   },
 
   computed: {
-    hasPosts() {
-      return this.posts.length > 0;
-    },
+    ...mapGetters('bundles', [
+      'getAllByMessage',
+      'hasAny',
+    ]),
   },
 
   mounted() {
-    this.fetch();
+    const messageId = Number(this.$route.params.messageId);
+
+    this.bundles = this.getAllByMessage(messageId);
   },
 
   methods: {
-    fetch() {
-      const messageId = Number(this.$route.params.messageId);
-      this.ipc.send('app:post/index/request', messageId);
-      this.ipc.once('app:post/index/success', (ev, posts) => {
-        this.posts = posts;
-      });
-    },
+    ...mapMutations('bundles', [
+      'remove',
+    ]),
 
-    onRemove(post) {
+    confirmRemove(bundle) {
       const isRemoveConfirmed = window.confirm('Are you sure?');
       if (!isRemoveConfirmed) {
         return;
       }
 
-      this.ipc.send('app:post/remove/request', post.id);
-      this.ipc.once('app:post/remove/success', () => {
-        this.fetch();
-      });
+      this.remove(bundle.id);
     },
   },
 

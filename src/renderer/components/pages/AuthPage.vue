@@ -10,7 +10,7 @@
 <script>
 import { mapMutations } from 'vuex';
 
-import Button from '../basic/Button';
+import Button from '../presenters/Button';
 
 export default {
   components: {
@@ -20,8 +20,18 @@ export default {
   inject: ['ipc'],
 
   methods: {
+    ...mapMutations('session', [
+      'setAccessToken',
+    ]),
+
     authorize() {
       this.ipc.send('app:auth/login/request');
+      this.ipc.on('app:auth/login/success', (ev, accessToken) => {
+        this.setAccessToken(accessToken);
+      });
+      this.ipc.on('app:auth/login/failure', () => {
+        // TODO
+      });
     },
   },
 };

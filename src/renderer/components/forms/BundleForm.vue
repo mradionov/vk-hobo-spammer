@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import Button from '../basic/Button';
+import Button from '../presenters/Button';
 import FriendList from '../presenters/FriendList';
 import RecepientList from '../presenters/RecepientList';
 

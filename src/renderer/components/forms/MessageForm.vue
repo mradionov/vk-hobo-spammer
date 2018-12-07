@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import Button from '../basic/Button';
+import Button from '../presenters/Button';
 
 export default {
 

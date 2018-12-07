@@ -28,7 +28,7 @@ export default {
     NavBackButton,
   },
 
-  inject: ['api', 'ipc'],
+  inject: ['api'],
 
   data: () => ({
     profile: null,
@@ -44,24 +44,25 @@ export default {
     async isAuthenticated(newIsAuthenticated, oldIsAuthenticated) {
       if (newIsAuthenticated) {
         await this.fetchProfile();
-        this.$router.push('/message/index');
+        this.$router.push({ name: 'messageIndex' });
         return;
       }
 
       this.resetProfile();
-      this.$router.push('/auth');
+      this.$router.push({ name: 'auth' });
     }
   },
 
-  created() {
-    this.ipc.on('app:auth/login/success', (ev, accessToken) => {
-      this.setAccessToken(accessToken);
-    });
+  mounted() {
+    if (this.isAuthenticated) {
+      this.$router.push({ name: 'messageIndex' });
+    } else {
+      this.$router.push({ name: 'auth' });
+    }
   },
 
   methods: {
     ...mapMutations('session', [
-      'setAccessToken',
       'clearAccessToken',
     ]),
 

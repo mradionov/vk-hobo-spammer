@@ -1,10 +1,10 @@
 <template>
   <div>
     <PageTitle>
-      Edit Message
+      Edit Bundle
     </PageTitle>
-    <MessageForm
-      :initialValues="message"
+    <BundleForm
+      :initialValues="bundle"
       @submit="submit"
     />
   </div>
@@ -13,42 +13,44 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex';
 
-import MessageForm from '../forms/MessageForm';
 import PageTitle from '../presenters/PageTitle';
+
+import BundleForm from '../forms/BundleForm';
 
 export default {
 
   components: {
-    MessageForm,
+    BundleForm,
     PageTitle,
   },
 
   computed: {
-    ...mapGetters('messages', [
+    ...mapGetters('bundles', [
       'getById',
     ]),
   },
 
   data() {
     return {
-      message: null,
+      bundle: null,
     };
   },
 
   mounted() {
-    this.message = this.getById(this.$route.params.messageId);
+    this.bundle = this.getById(this.$route.params.bundleId);
   },
 
   methods: {
-    ...mapMutations('messages', [
+    ...mapMutations('bundles', [
       'update',
     ]),
 
     submit(data) {
-      this.update(data);
-      this.$router.push('/message/index');
-    },
+      const { messageId } = this.$route.params;
 
+      this.update(data);
+      this.$router.push({ name: 'bundleIndex', params: { messageId }});
+    },
   },
 
 };

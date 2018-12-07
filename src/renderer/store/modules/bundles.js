@@ -10,6 +10,9 @@ const module = {
   getters: {
     all: state => state.ids.map(id => state.map[id]),
     hasAny: state => state.ids.length > 0,
+    getAllByMessage: (state, getters) =>
+      messageId =>
+        getters.all.filter(bundle => bundle.messageId === messageId),
     getById: state => id => state.map[id],
   },
 
@@ -19,12 +22,12 @@ const module = {
       const maxId = Math.max(ids);
       const id = maxId + 1;
 
-      const message = payload;
-      message.id = id;
-      message.createdAt = Date.now();
+      const bundle = payload;
+      bundle.id = id;
+      bundle.createdAt = Date.now();
 
       state.ids.push(id);
-      state.map[id] = message;
+      state.map[id] = bundle;
     },
     update: (state, payload) => {
       const id = payload.id;

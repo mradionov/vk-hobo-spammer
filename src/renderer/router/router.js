@@ -6,25 +6,29 @@ import LandingPage from '../components/pages/LandingPage';
 import MessageIndexPage from '../components/pages/MessageIndexPage';
 import MessageCreatePage from '../components/pages/MessageCreatePage';
 import MessageEditPage from '../components/pages/MessageEditPage';
-import PostIndexPage from '../components/pages/PostIndexPage';
-import PostCreatePage from '../components/pages/PostCreatePage';
-import PostEditPage from '../components/pages/PostEditPage';
+import BundleIndexPage from '../components/pages/BundleIndexPage';
+import BundleCreatePage from '../components/pages/BundleCreatePage';
+import BundleEditPage from '../components/pages/BundleEditPage';
 
 const routes = [
   {
     path: '/',
+    name: 'root',
     component: LandingPage,
   },
   {
     path: '/auth',
+    name: 'auth',
     component: AuthPage,
   },
   {
     path: '/message/index',
+    name: 'messageIndex',
     component: MessageIndexPage,
   },
   {
     path: '/message/create',
+    name: 'messageCreate',
     component: MessageCreatePage,
     meta: { canBack: true },
   },
@@ -35,21 +39,21 @@ const routes = [
     meta: { canBack: true },
   },
   {
-    path: '/message/:messageId/post/index',
-    name: 'postIndex',
-    component: PostIndexPage,
+    path: '/message/:messageId/bundle/index',
+    name: 'bundleIndex',
+    component: BundleIndexPage,
     meta: { canBack: true },
   },
   {
-    path: '/message/:messageId/post/create',
-    name: 'postCreate',
-    component: PostCreatePage,
+    path: '/message/:messageId/bundle/create',
+    name: 'bundleCreate',
+    component: BundleCreatePage,
     meta: { canBack: true },
   },
   {
-    path: '/message/:messageId/post/:postId/edit',
-    name: 'postEdit',
-    component: PostEditPage,
+    path: '/message/:messageId/bundle/:bundleId/edit',
+    name: 'bundleEdit',
+    component: BundleEditPage,
     meta: { canBack: true },
   },
 ];

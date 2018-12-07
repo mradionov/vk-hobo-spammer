@@ -4,14 +4,14 @@
       Messages
       <ButtonLink
         slot="actions"
-        to="/message/create"
+        :to="{ name: 'messageCreate' }"
       >
         Create message
       </ButtonLink>
     </PageTitle>
     <table
       :class="$style.table"
-      v-if="hasMessages"
+      v-if="hasAny"
     >
       <thead>
         <tr :class="$style.row">
@@ -28,7 +28,7 @@
             Actions
           </th>
           <th>
-            Posts
+            Bundles
           </th>
         </tr>
       </thead>
@@ -57,17 +57,17 @@
           <td>
             <ButtonLink
               :to="{
-                name: 'postIndex',
+                name: 'bundleIndex',
                 params: { messageId: message.id }
               }"
             >
-              Show posts
+              Show bundles
             </ButtonLink>
           </td>
         </tr>
       </tbody>
     </table>
-    <div :class="$style.empty" v-if="!hasMessages">
+    <div :class="$style.empty" v-if="!hasAny">
       No messages yet
     </div>
   </div>
@@ -76,8 +76,8 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex';
 
-import Button from '../basic/Button';
-import ButtonLink from '../basic/ButtonLink';
+import Button from '../presenters/Button';
+import ButtonLink from '../presenters/ButtonLink';
 import PageTitle from '../presenters/PageTitle';
 
 export default {
@@ -99,10 +99,8 @@ export default {
   computed: {
     ...mapGetters('messages', {
       messages: 'all',
+      hasAny: 'hasAny',
     }),
-    hasMessages() {
-      return this.messages.length > 0;
-    },
   },
 
   methods: {

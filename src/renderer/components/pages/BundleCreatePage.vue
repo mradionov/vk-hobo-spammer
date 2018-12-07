@@ -1,9 +1,9 @@
 <template>
   <div>
     <PageTitle>
-      Create Message
+      Create Bundle
     </PageTitle>
-    <MessageForm
+    <BundleForm
       @submit="submit"
     />
   </div>
@@ -13,25 +13,30 @@
 import { mapMutations } from 'vuex';
 
 import Button from '../presenters/Button';
-import MessageForm from '../forms/MessageForm';
 import PageTitle from '../presenters/PageTitle';
+
+import BundleForm from '../forms/BundleForm';
 
 export default {
 
   components: {
     Button,
-    MessageForm,
     PageTitle,
+    BundleForm,
   },
 
   methods: {
-    ...mapMutations('messages', [
+    ...mapMutations('bundles', [
       'create',
     ]),
 
     submit(data) {
+      const messageId = this.$route.params.messageId;
+
+      data.messageId = messageId;
+
       this.create(data);
-      this.$router.push('/message/index');
+      this.$router.push({ name: 'postIndex', params: { messageId }});
     },
 
   },
