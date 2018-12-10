@@ -27,10 +27,10 @@
             Created at
           </th>
           <th>
-            Users
+            Actions
           </th>
           <th>
-            Actions
+            Posts
           </th>
         </tr>
       </thead>
@@ -41,7 +41,6 @@
         >
           <td>{{bundle.id}}</td>
           <td>{{bundle.createdAt | date}}</td>
-          <td>{{bundle.userIds.length}}</td>
           <td>
             <ButtonLink
               :class="$style.editButton"
@@ -59,6 +58,16 @@
               Remove
             </Button>
           </td>
+          <td>
+            <ButtonLink
+              :to="{
+                name: 'postIndex',
+                params: { bundleId: bundle.id }
+              }"
+            >
+              Show posts
+            </ButtonLink>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -69,7 +78,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 
 import Button from '../presenters/Button';
 import ButtonLink from '../presenters/ButtonLink';
@@ -91,23 +100,22 @@ export default {
     },
   },
 
-  data() {
-    return {
-      bundles: [],
-    };
-  },
-
   computed: {
-    ...mapGetters('bundles', [
-      'getAllByMessage',
-      'hasAny',
-    ]),
-  },
+    ...mapState('bundles', {
+      bundles(state) {
+        return state.ids
+          .map(id => state.map[id])
+          .filter(bundle => bundle.messageId === this.messageId);
+      },
+    }),
 
-  mounted() {
-    const messageId = Number(this.$route.params.messageId);
+    messageId() {
+      return Number(this.$route.params.messageId);
+    },
 
-    this.bundles = this.getAllByMessage(messageId);
+    hasAny() {
+      return this.bundles.length > 0;
+    }
   },
 
   methods: {

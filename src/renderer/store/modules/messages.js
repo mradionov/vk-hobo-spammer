@@ -9,7 +9,6 @@ const module = {
 
   getters: {
     all: state => state.ids.map(id => state.map[id]),
-    hasAny: state => state.ids.length > 0,
     getById: state => id => state.map[id],
   },
 

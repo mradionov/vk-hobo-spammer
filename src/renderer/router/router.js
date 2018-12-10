@@ -9,6 +9,7 @@ import MessageEditPage from '../components/pages/MessageEditPage';
 import BundleIndexPage from '../components/pages/BundleIndexPage';
 import BundleCreatePage from '../components/pages/BundleCreatePage';
 import BundleEditPage from '../components/pages/BundleEditPage';
+import PostIndexPage from '../components/pages/PostIndexPage';
 
 const routes = [
   {
@@ -54,6 +55,12 @@ const routes = [
     path: '/message/:messageId/bundle/:bundleId/edit',
     name: 'bundleEdit',
     component: BundleEditPage,
+    meta: { canBack: true },
+  },
+  {
+    path: '/message/:messageId/bundle/:bundleId/post/index',
+    name: 'postIndex',
+    component: PostIndexPage,
     meta: { canBack: true },
   },
 ];

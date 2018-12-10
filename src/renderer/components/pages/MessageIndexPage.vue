@@ -99,8 +99,10 @@ export default {
   computed: {
     ...mapGetters('messages', {
       messages: 'all',
-      hasAny: 'hasAny',
     }),
+    hasAny() {
+      return this.messages.length > 0;
+    }
   },
 
   methods: {

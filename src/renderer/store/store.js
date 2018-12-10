@@ -7,9 +7,10 @@ import rootMutations from './rootMutations';
 import setupPersist from './setup/setupPersist';
 import setupHTTP from './setup/setupHTTP';
 
-import bundles from './modules/bundles';
-import messages from './modules/messages';
 import session from './modules/session';
+import messages from './modules/messages';
+import bundles from './modules/bundles';
+import posts from './modules/posts';
 
 function createStore({ ipc, http }) {
   Vue.use(Vuex);
@@ -18,9 +19,10 @@ function createStore({ ipc, http }) {
     getters: rootGetters,
     mutations: rootMutations,
     modules: {
-      bundles,
-      messages,
       session,
+      messages,
+      bundles,
+      posts,
     },
   });
 
