@@ -30,7 +30,7 @@ const module = {
   actions: {
     create: ({ commit, state }, payload) => {
       const ids = state.ids.length ? state.ids : [0];
-      const maxId = Math.max(ids);
+      const maxId = Math.max(...ids);
       const id = maxId + 1;
 
       const bundle = payload;

@@ -2,6 +2,14 @@
   <div>
     <PageTitle>
       Posts
+      <div slot="actions">
+        <Button @click="retryAll">
+          Retry all
+        </Button>
+        <Button @click="sendAll">
+          Send all
+        </Button>
+      </div>
     </PageTitle>
     <table
       :class="$style.table"
@@ -13,13 +21,19 @@
             ID
           </th>
           <th>
-            Created at
-          </th>
-          <th>
             User
           </th>
           <th>
+            Created at
+          </th>
+          <th>
             Status
+          </th>
+          <th>
+            Last error
+          </th>
+          <th>
+            Attempts
           </th>
           <th>
             Actions
@@ -32,15 +46,22 @@
           v-for="post in posts"
         >
           <td>{{post.id}}</td>
-          <td>{{post.createdAt | date}}</td>
           <td>{{post.userId}}</td>
+          <td>{{post.createdAt | date}}</td>
           <td>{{post.status}}</td>
+          <td>{{post.lastErrorCode || '-'}}</td>
+          <td>{{post.attempts}}</td>
           <td>
             <Button
-              :disabled="isAnyPostInProgress"
               @click="send(post)"
+              :disabled="!canSend(post)"
             >
-              Send
+              <span v-if="isFailed(post)">
+                Retry
+              </span>
+              <span v-else>
+                Send
+              </span>
             </Button>
           </td>
         </tr>
@@ -82,11 +103,6 @@ export default {
           .map(id => state.map[id])
           .filter(post => post.bundleId === this.bundleId);
       },
-      isAnyPostInProgress(state) {
-        return state.ids
-          .map(id => state.map[id])
-          .some(post => post.status === POST_STATUSES.progress);
-      },
     }),
 
     bundleId() {
@@ -99,12 +115,31 @@ export default {
   },
 
   methods: {
-    ...mapActions('posts', {
-      sendPost: 'send'
-    }),
+    ...mapActions('posts', [
+      'attemptSend',
+      'attemptSendAllByBundle',
+      'attemptRetryAllByBundle',
+    ]),
 
-    async send(post) {
-      await this.sendPost(post.id);
+    send(post) {
+      this.attemptSend(post.id);
+    },
+
+    sendAll() {
+      this.attemptSendAllByBundle(this.bundleId);
+    },
+
+    retryAll() {
+      this.attemptRetryAllByBundle(this.bundleId);
+    },
+
+    canSend(post) {
+      return post.status === POST_STATUSES.idle
+        || post.status === POST_STATUSES.failed;
+    },
+
+    isFailed(post) {
+      return post.status === POST_STATUSES.failed;
     },
   },
 

@@ -25,6 +25,12 @@ export default {
     BundleForm,
   },
 
+  computed: {
+    messageId() {
+      return Number(this.$route.params.messageId);
+    }
+  },
+
   methods: {
     ...mapMutations({
       createPost: 'posts/create',
@@ -34,7 +40,7 @@ export default {
     }),
 
     async submit(formData) {
-      const messageId = this.$route.params.messageId;
+      const messageId = this.messageId;
 
       const bundleData = {
         messageId,
