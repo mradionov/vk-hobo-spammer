@@ -171,6 +171,18 @@ const module = {
       });
     },
 
+    remove({ commit }, id) {
+      commit('remove', id);
+    },
+
+    removeAllByBundle({ dispatch, getters }, bundleId) {
+      const posts = getters.getAllByBundle(bundleId);
+
+      posts.forEach((post) => {
+        dispatch('remove', post.id);
+      });
+    },
+
   },
 
 };

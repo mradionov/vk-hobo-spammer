@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import Button from '../presenters/Button';
 import ButtonLink from '../presenters/ButtonLink';
@@ -119,12 +119,12 @@ export default {
   },
 
   methods: {
-    ...mapMutations('bundles', [
+    ...mapActions('bundles', [
       'remove',
     ]),
 
     confirmRemove(bundle) {
-      const isRemoveConfirmed = window.confirm('Are you sure?');
+      const isRemoveConfirmed = window.confirm('All posts will be removed. Are you sure?');
       if (!isRemoveConfirmed) {
         return;
       }
