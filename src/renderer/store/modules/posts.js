@@ -54,22 +54,9 @@ const module = {
   },
 
   mutations: {
-    create(state, payload) {
-      const ids = state.ids.length ? state.ids : [0];
-      const maxId = Math.max(...ids);
-      const id = maxId + 1;
-
-      const post = payload;
-      post.id = id;
-      post.createdAt = Date.now();
-      post.status = POST_STATUSES.idle;
-      post.lastErrorCode = null;
-      post.attempts = 0;
-
-      state.ids.push(id);
-      state.map[id] = post;
-
-      return id;
+    add(state, post) {
+      state.ids.push(post.id);
+      state.map[post.id] = post;
     },
 
     remove(state, idToRemove) {
@@ -169,6 +156,23 @@ const module = {
       failedPosts.forEach((post) => {
         dispatch('attemptSend', post.id);
       });
+    },
+
+    create({ commit, state }, payload) {
+      const ids = state.ids.length ? state.ids : [0];
+      const maxId = Math.max(...ids);
+      const id = maxId + 1;
+
+      const post = payload;
+      post.id = id;
+      post.createdAt = Date.now();
+      post.status = POST_STATUSES.idle;
+      post.lastErrorCode = null;
+      post.attempts = 0;
+
+      commit('add', post);
+
+      return id;
     },
 
     remove({ commit }, id) {

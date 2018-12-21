@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Button from '../presenters/Button';
 import PageTitle from '../presenters/PageTitle';
@@ -32,10 +32,8 @@ export default {
   },
 
   methods: {
-    ...mapMutations({
-      createPost: 'posts/create',
-    }),
     ...mapActions({
+      createPost: 'posts/create',
       createBundle: 'bundles/create',
     }),
 
@@ -47,8 +45,6 @@ export default {
       };
 
       const bundleId = await this.createBundle(bundleData);
-
-      console.log({ bundleId });
 
       formData.userIds.forEach((userId) => {
         const postData = {

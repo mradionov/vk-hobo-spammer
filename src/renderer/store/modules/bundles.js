@@ -55,6 +55,10 @@ const module = {
       return id;
     },
 
+    update({ commit }, payload) {
+      commit('update', payload);
+    },
+
     remove({ commit, dispatch }, id) {
       commit('remove', id);
       dispatch('posts/removeAllByBundle', id, { root: true });

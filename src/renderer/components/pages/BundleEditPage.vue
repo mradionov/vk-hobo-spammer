@@ -4,14 +4,14 @@
       Edit Bundle
     </PageTitle>
     <BundleForm
-      :initialValues="bundle"
+      :initialValues="initialValues"
       @submit="submit"
     />
   </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import PageTitle from '../presenters/PageTitle';
 
@@ -25,30 +25,69 @@ export default {
   },
 
   computed: {
-    ...mapGetters('bundles', [
-      'getById',
-    ]),
+    bundleId() {
+      return Number(this.$route.params.bundleId);
+    },
+    messageId() {
+      return Number(this.$route.params.messageId);
+    },
+    ...mapGetters({
+      'getPostsAllByBundle': 'posts/getAllByBundle',
+    }),
   },
 
   data() {
     return {
-      bundle: null,
+      initialValues: null,
+      posts: [],
+      userIds: [],
     };
   },
 
   mounted() {
-    this.bundle = this.getById(this.$route.params.bundleId);
+    this.posts = this.getPostsAllByBundle(this.bundleId);
+
+    const userIds = this.posts.map(post => post.userId);
+
+    this.initialValues = {
+      userIds,
+    };
   },
 
   methods: {
-    ...mapMutations('bundles', [
-      'update',
-    ]),
+    ...mapActions({
+      createPost: 'posts/create',
+      removePost: 'posts/remove',
+    }),
 
     submit(data) {
-      const { messageId } = this.$route.params;
+      const messageId = this.messageId;
+      const bundleId = this.bundleId;
 
-      this.update(data);
+      const prevUserIds = this.posts.map(post => post.userId);
+      const newUserIds = data.userIds;
+
+      const removedPostIds = this.posts.filter(post =>
+        !newUserIds.includes(post.userId),
+      );
+
+      removedPostIds.forEach((post) => {
+        this.removePost(post.id);
+      });
+
+      const addedUserIds = newUserIds.filter(userId =>
+        !prevUserIds.includes(userId),
+      );
+
+      addedUserIds.forEach((userId) => {
+        const postData = {
+          bundleId,
+          userId,
+        };
+
+        this.createPost(postData);
+      });
+
       this.$router.push({ name: 'bundleIndex', params: { messageId }});
     },
   },
