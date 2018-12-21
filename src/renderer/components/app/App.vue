@@ -49,7 +49,6 @@ export default {
       }
 
       this.resetProfile();
-      this.$router.push({ name: 'auth' });
     }
   },
 
