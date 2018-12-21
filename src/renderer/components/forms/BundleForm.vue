@@ -36,11 +36,8 @@ export default {
   },
 
   props: {
-    initialValues: {
-      type: Object,
-      default: () => ({
-        userIds: [],
-      }),
+    userIds: {
+      type: Array,
     },
   },
 
@@ -48,17 +45,15 @@ export default {
 
   data() {
     return {
-      fields: this.initialValues || {
-        userIds: [],
-      },
+      selectedUserIds: this.userIds || [],
       friends: [],
       recepients: [],
     };
   },
 
   watch: {
-    initialValues(initialValues) {
-      this.fields = initialValues;
+    userIds(userIds) {
+      this.selectedUserIds = userIds;
     },
   },
 
@@ -67,7 +62,7 @@ export default {
       this.friends = await this.api.getFriends();
 
       this.friends.forEach((user) => {
-        if (this.fields.userIds.includes(user.id)) {
+        if (this.selectedUserIds.includes(user.id)) {
           this.recepients.push(user);
         }
       });
@@ -78,19 +73,25 @@ export default {
 
   methods: {
     onSave() {
-      this.$emit('submit', this.fields);
+      const formData = {
+        users: this.recepients,
+      };
+      this.$emit('submit', formData);
     },
     onFriendSelect(selectedUser) {
-      if (this.fields.userIds.includes(selectedUser.id)) {
+      if (this.selectedUserIds.includes(selectedUser.id)) {
         return;
       }
 
       this.recepients.push(selectedUser);
-      this.fields.userIds.push(selectedUser.id);
+      this.selectedUserIds.push(selectedUser.id);
     },
     onRecepientSelect(selectedUser) {
       this.recepients = this.recepients.filter(user => user.id !== selectedUser.id);
-      this.fields.userIds = this.fields.userIds.filter(id => id !== selectedUser.id);
+
+      this.selectedUserIds = this.selectedUserIds.filter(id =>
+        id !== selectedUser.id,
+      );
     },
   },
 

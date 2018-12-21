@@ -4,7 +4,7 @@
       Edit Bundle
     </PageTitle>
     <BundleForm
-      :initialValues="initialValues"
+      :userIds="userIds"
       @submit="submit"
     />
   </div>
@@ -46,12 +46,7 @@ export default {
 
   mounted() {
     this.posts = this.getPostsAllByBundle(this.bundleId);
-
-    const userIds = this.posts.map(post => post.userId);
-
-    this.initialValues = {
-      userIds,
-    };
+    this.userIds = this.posts.map(post => post.user.id);
   },
 
   methods: {
@@ -60,35 +55,35 @@ export default {
       removePost: 'posts/remove',
     }),
 
-    submit(data) {
+    submit(formData) {
       const messageId = this.messageId;
       const bundleId = this.bundleId;
 
-      const prevUserIds = this.posts.map(post => post.userId);
-      const newUserIds = data.userIds;
+      const newUsers = formData.users;
+      const newUserIds = newUsers.map(user => user.id);
 
-      const removedPostIds = this.posts.filter(post =>
-        !newUserIds.includes(post.userId),
+      const prevUserIds = this.posts.map(post => post.user.id);
+      const addedUsers = newUsers.filter(user =>
+        !prevUserIds.includes(user.id),
       );
 
-      removedPostIds.forEach((post) => {
-        this.removePost(post.id);
-      });
-
-      const addedUserIds = newUserIds.filter(userId =>
-        !prevUserIds.includes(userId),
-      );
-
-      addedUserIds.forEach((userId) => {
+      addedUsers.forEach((user) => {
         const postData = {
           bundleId,
-          userId,
+          user,
         };
 
         this.createPost(postData);
       });
 
-      this.$router.push({ name: 'bundleIndex', params: { messageId }});
+      const removedPostIds = this.posts.filter(post =>
+        !newUserIds.includes(post.user.id),
+      );
+      removedPostIds.forEach((post) => {
+        this.removePost(post.id);
+      });
+
+      this.$router.replace({ name: 'bundleIndex', params: { messageId }});
     },
   },
 

@@ -46,7 +46,7 @@
           v-for="post in posts"
         >
           <td>{{post.id}}</td>
-          <td>{{post.userId}}</td>
+          <td>{{post.user.first_name}} {{post.user.last_name}}</td>
           <td>{{post.createdAt | date}}</td>
           <td>{{post.status}}</td>
           <td>{{post.lastErrorCode || '-'}}</td>

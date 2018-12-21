@@ -46,16 +46,16 @@ export default {
 
       const bundleId = await this.createBundle(bundleData);
 
-      formData.userIds.forEach((userId) => {
+      formData.users.forEach((user) => {
         const postData = {
           bundleId,
-          userId,
+          user,
         };
 
         this.createPost(postData);
       });
 
-      this.$router.push({ name: 'bundleIndex', params: { messageId }});
+      this.$router.replace({ name: 'bundleIndex', params: { messageId }});
     },
 
   },
