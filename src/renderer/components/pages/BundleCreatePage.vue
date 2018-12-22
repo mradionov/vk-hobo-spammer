@@ -55,7 +55,7 @@ export default {
         this.createPost(postData);
       });
 
-      this.$router.replace({ name: 'bundleIndex', params: { messageId }});
+      this.$router.go(-1);
     },
 
   },

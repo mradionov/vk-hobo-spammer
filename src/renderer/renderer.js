@@ -1,8 +1,10 @@
 import Vue from 'vue';
 
-import HTTPClient from './lib/HTTPClient';
-import IPCClient from './lib/IPCClient';
-import VKApi from './lib/VKApi';
+import HTTPClient from './services/HTTPClient';
+import IPCClient from './services/IPCClient';
+import VKApi from './services/VKApi';
+
+import dateHelper from './helpers/dateHelper';
 
 import createStore from './store/store';
 import createRouter from './router/router';
@@ -38,5 +40,7 @@ const app = new Vue({
   render: h => h(App),
 
 });
+
+Vue.filter('date', dateHelper.format);
 
 app.$mount('[data-app]');

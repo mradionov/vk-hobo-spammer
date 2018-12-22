@@ -127,7 +127,7 @@ const module = {
         });
 
         dispatch('attemptSendNext');
-      }, 2000);
+      }, 20000);
     },
 
     attemptSendNext({ commit, dispatch, getters }) {

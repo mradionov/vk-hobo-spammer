@@ -43,6 +43,7 @@
           <td>
             <ButtonLink
               :class="$style.editButton"
+              :disabled="!canEdit"
               :to="{
                 name: 'messageEdit',
                 params: { messageId: message.id }
@@ -50,7 +51,10 @@
             >
               Edit
             </ButtonLink>
-            <Button @click="confirmRemove(message)">
+            <Button
+              :disabled="!canRemove"
+              @click="confirmRemove(message)"
+            >
               Remove
             </Button>
           </td>
@@ -88,17 +92,11 @@ export default {
     PageTitle,
   },
 
-  filters: {
-    date(value) {
-      const date = new Date(value);
-      const formattedDate = date.toLocaleString('ru-RU');
-      return formattedDate;
-    },
-  },
-
   computed: {
-    ...mapGetters('messages', {
-      messages: 'all',
+    ...mapGetters({
+      messages: 'messages/all',
+      canEdit: 'canEdit',
+      canRemove: 'canRemove',
     }),
     hasAny() {
       return this.messages.length > 0;
@@ -106,9 +104,9 @@ export default {
   },
 
   methods: {
-    ...mapActions('messages', [
-      'remove',
-    ]),
+    ...mapActions({
+      removeMessage: 'messages/remove'
+    }),
 
     confirmRemove(message) {
       const isRemoveConfirmed = window.confirm(
@@ -119,7 +117,7 @@ export default {
         return;
       }
 
-      this.remove(message.id);
+      this.removeMessage(message.id);
     },
 
   },

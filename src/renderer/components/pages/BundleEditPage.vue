@@ -83,7 +83,7 @@ export default {
         this.removePost(post.id);
       });
 
-      this.$router.replace({ name: 'bundleIndex', params: { messageId }});
+      this.$router.go(-1);
     },
   },
 

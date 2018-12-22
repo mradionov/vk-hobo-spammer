@@ -44,6 +44,7 @@
           <td>
             <ButtonLink
               :class="$style.editButton"
+              :disabled="!canEdit"
               :to="{
                 name: 'bundleEdit',
                 params: {
@@ -54,7 +55,10 @@
             >
               Edit
             </ButtonLink>
-            <Button @click="confirmRemove(bundle)">
+            <Button
+              :disabled="!canRemove"
+              @click="confirmRemove(bundle)"
+            >
               Remove
             </Button>
           </td>
@@ -78,7 +82,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import Button from '../presenters/Button';
 import ButtonLink from '../presenters/ButtonLink';
@@ -92,15 +96,12 @@ export default {
     PageTitle,
   },
 
-  filters: {
-    date(value) {
-      const date = new Date(value);
-      const formattedDate = date.toLocaleString('ru-RU');
-      return formattedDate;
-    },
-  },
-
   computed: {
+    ...mapGetters({
+      canEdit: 'canEdit',
+      canRemove: 'canRemove',
+    }),
+
     ...mapState('bundles', {
       bundles(state) {
         return state.ids
@@ -119,17 +120,19 @@ export default {
   },
 
   methods: {
-    ...mapActions('bundles', [
-      'remove',
-    ]),
+    ...mapActions({
+      'removeBundle': 'bundles/remove',
+    }),
 
     confirmRemove(bundle) {
-      const isRemoveConfirmed = window.confirm('All posts will be removed. Are you sure?');
+      const isRemoveConfirmed = window.confirm(
+        'All posts will be removed. Are you sure?',
+      );
       if (!isRemoveConfirmed) {
         return;
       }
 
-      this.remove(bundle.id);
+      this.removeBundle(bundle.id);
     },
   },
 
