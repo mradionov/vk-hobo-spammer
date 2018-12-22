@@ -9,71 +9,54 @@
         Create message
       </ButtonLink>
     </PageTitle>
-    <table
-      :class="$style.table"
-      v-if="hasAny"
-    >
-      <thead>
-        <tr :class="$style.row">
-          <th :class="$style.idCell">
-            ID
-          </th>
-          <th>
-            Title
-          </th>
-          <th>
-            Created at
-          </th>
-          <th>
-            Actions
-          </th>
-          <th>
-            Bundles
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          :class="$style.row"
-          v-for="message in messages"
-        >
-          <td>{{message.id}}</td>
-          <td>{{message.title}}</td>
-          <td>{{message.createdAt | date}}</td>
-          <td>
-            <ButtonLink
-              :class="$style.editButton"
-              :disabled="!canEdit"
-              :to="{
-                name: 'messageEdit',
-                params: { messageId: message.id }
-              }"
-            >
-              Edit
-            </ButtonLink>
-            <Button
-              :disabled="!canRemove"
-              @click="confirmRemove(message)"
-            >
-              Remove
-            </Button>
-          </td>
-          <td>
-            <ButtonLink
-              :to="{
-                name: 'bundleIndex',
-                params: { messageId: message.id }
-              }"
-            >
-              Show bundles
-            </ButtonLink>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div :class="$style.empty" v-if="!hasAny">
+    <Table v-if="hasAnyMessages">
+      <HeaderRow slot="header">
+        <HeaderCell>ID</HeaderCell>
+        <HeaderCell>Title</HeaderCell>
+        <HeaderCell>Created at</HeaderCell>
+        <HeaderCell>Actions</HeaderCell>
+        <HeaderCell>Bundles</HeaderCell>
+      </HeaderRow>
+      <Row
+        v-for="message in messages"
+        :key="message.id"
+      >
+        <Cell>{{message.id}}</Cell>
+        <Cell>{{message.title}}</Cell>
+        <Cell>{{message.createdAt | date}}</Cell>
+        <Cell>
+          <ButtonLink
+            :class="$style.editButton"
+            :disabled="!canEdit"
+            :to="{
+              name: 'messageEdit',
+              params: { messageId: message.id }
+            }"
+          >
+            Edit
+          </ButtonLink>
+          <Button
+            :disabled="!canRemove"
+            @click="confirmRemove(message)"
+          >
+            Remove
+          </Button>
+        </Cell>
+        <Cell>
+          <ButtonLink
+            :to="{
+              name: 'bundleIndex',
+              params: { messageId: message.id }
+            }"
+          >
+            Show bundles
+          </ButtonLink>
+        </Cell>
+      </Row>
+    </Table>
+    <NoItemsMessage v-if="!hasAnyMessages">
       No messages yet
-    </div>
+    </NoItemsMessage>
   </div>
 </template>
 
@@ -82,14 +65,22 @@ import { mapActions, mapGetters } from 'vuex';
 
 import Button from '../presenters/Button';
 import ButtonLink from '../presenters/ButtonLink';
+import NoItemsMessage from '../presenters/NoItemsMessage';
 import PageTitle from '../presenters/PageTitle';
+import { Table, HeaderRow, HeaderCell, Row, Cell } from '../presenters/Table';
 
 export default {
 
   components: {
     Button,
     ButtonLink,
+    NoItemsMessage,
     PageTitle,
+    Table,
+    HeaderRow,
+    HeaderCell,
+    Row,
+    Cell,
   },
 
   computed: {
@@ -98,7 +89,7 @@ export default {
       canEdit: 'canEdit',
       canRemove: 'canRemove',
     }),
-    hasAny() {
+    hasAnyMessages() {
       return this.messages.length > 0;
     }
   },
@@ -126,26 +117,7 @@ export default {
 </script>
 
 <style module>
-.table {
-  text-align: left;
-  width: 100%;
-}
-
-.row {
-  border-bottom: 1px solid #e7e8ec;
-}
-
-.idCell {
-  width: 40px;
-}
-
 .editButton {
   margin-right: 5px;
-}
-
-.empty {
-  color: #818d99;
-  font-size: 18px;
-  text-align: center;
 }
 </style>

@@ -14,70 +14,55 @@
         </ButtonLink>
       </div>
     </PageTitle>
-    <table
-      :class="$style.table"
-      v-if="hasAny"
-    >
-      <thead>
-        <tr :class="$style.row">
-          <th>
-            ID
-          </th>
-          <th>
-            Created at
-          </th>
-          <th>
-            Actions
-          </th>
-          <th>
-            Posts
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          :class="$style.row"
-          v-for="bundle in bundles"
-        >
-          <td>{{bundle.id}}</td>
-          <td>{{bundle.createdAt | date}}</td>
-          <td>
-            <ButtonLink
-              :class="$style.editButton"
-              :disabled="!canEdit"
-              :to="{
-                name: 'bundleEdit',
-                params: {
-                  messageId: $route.params.messageId,
-                  bundleId: bundle.id,
-                },
-              }"
-            >
-              Edit
-            </ButtonLink>
-            <Button
-              :disabled="!canRemove"
-              @click="confirmRemove(bundle)"
-            >
-              Remove
-            </Button>
-          </td>
-          <td>
-            <ButtonLink
-              :to="{
-                name: 'postIndex',
-                params: { bundleId: bundle.id }
-              }"
-            >
-              Show posts
-            </ButtonLink>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div :class="$style.empty" v-if="!hasAny">
+    <Table v-if="hasAnyBundles">
+      <HeaderRow slot="header">
+        <HeaderCell>ID</HeaderCell>
+        <HeaderCell>Created at</HeaderCell>
+        <HeaderCell>Actions</HeaderCell>
+        <HeaderCell>Posts</HeaderCell>
+      </HeaderRow>
+      <Row
+        v-for="bundle in bundles"
+        :key="bundle.id"
+      >
+        <Cell>{{bundle.id}}</Cell>
+        <Cell>{{bundle.createdAt | date}}</Cell>
+        <Cell>
+          <ButtonLink
+            :class="$style.editButton"
+            :disabled="!canEdit"
+            :to="{
+              name: 'bundleEdit',
+              params: {
+                messageId: $route.params.messageId,
+                bundleId: bundle.id,
+              },
+            }"
+          >
+            Edit
+          </ButtonLink>
+          <Button
+            :disabled="!canRemove"
+            @click="confirmRemove(bundle)"
+          >
+            Remove
+          </Button>
+        </Cell>
+        <Cell>
+          <ButtonLink
+            :to="{
+              name: 'postIndex',
+              params: { bundleId: bundle.id }
+            }"
+          >
+            Show posts
+          </ButtonLink>
+        </Cell>
+      </Row>
+    </Table>
+    <NoItemsMessage v-if="!hasAnyBundles">
       No bundles yet
-    </div>
+    </NoItemsMessage>
   </div>
 </template>
 
@@ -86,14 +71,22 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import Button from '../presenters/Button';
 import ButtonLink from '../presenters/ButtonLink';
+import NoItemsMessage from '../presenters/NoItemsMessage';
 import PageTitle from '../presenters/PageTitle';
+import { Table, HeaderRow, HeaderCell, Row, Cell } from '../presenters/Table';
 
 export default {
 
   components: {
     Button,
     ButtonLink,
+    NoItemsMessage,
     PageTitle,
+    Table,
+    HeaderRow,
+    HeaderCell,
+    Row,
+    Cell,
   },
 
   computed: {
@@ -114,7 +107,7 @@ export default {
       return Number(this.$route.params.messageId);
     },
 
-    hasAny() {
+    hasAnyBundles() {
       return this.bundles.length > 0;
     }
   },
@@ -140,22 +133,7 @@ export default {
 </script>
 
 <style module>
-.table {
-  text-align: left;
-  width: 100%;
-}
-
-.row {
-  border-bottom: 1px solid #e7e8ec;
-}
-
 .editButton {
   margin-right: 5px;
-}
-
-.empty {
-  color: #818d99;
-  font-size: 18px;
-  text-align: center;
 }
 </style>

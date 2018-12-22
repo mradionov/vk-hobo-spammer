@@ -11,65 +11,44 @@
         </Button>
       </div>
     </PageTitle>
-    <table
-      :class="$style.table"
-      v-if="hasAny"
-    >
-      <thead>
-        <tr :class="$style.row">
-          <th>
-            ID
-          </th>
-          <th>
-            User
-          </th>
-          <th>
-            Created at
-          </th>
-          <th>
-            Status
-          </th>
-          <th>
-            Last error
-          </th>
-          <th>
-            Attempts
-          </th>
-          <th>
-            Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          :class="$style.row"
-          v-for="post in posts"
-        >
-          <td>{{post.id}}</td>
-          <td>{{post.user.first_name}} {{post.user.last_name}}</td>
-          <td>{{post.createdAt | date}}</td>
-          <td>{{post.status}}</td>
-          <td>{{post.lastErrorCode || '-'}}</td>
-          <td>{{post.attempts}}</td>
-          <td>
-            <Button
-              @click="send(post)"
-              :disabled="!canSend(post)"
-            >
-              <span v-if="isFailed(post)">
-                Retry
-              </span>
-              <span v-else>
-                Send
-              </span>
-            </Button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div :class="$style.empty" v-if="!hasAny">
+    <Table v-if="hasAnyPosts">
+      <HeaderRow slot="header">
+        <HeaderCell>ID</HeaderCell>
+        <HeaderCell>User</HeaderCell>
+        <HeaderCell>Created at</HeaderCell>
+        <HeaderCell>Status</HeaderCell>
+        <HeaderCell>Last error</HeaderCell>
+        <HeaderCell>Attempts</HeaderCell>
+        <HeaderCell>Actions</HeaderCell>
+      </HeaderRow>
+      <Row
+        v-for="post in posts"
+        :key="post.id"
+      >
+        <Cell>{{post.id}}</Cell>
+        <Cell>{{post.user.first_name}} {{post.user.last_name}}</Cell>
+        <Cell>{{post.createdAt | date}}</Cell>
+        <Cell>{{post.status}}</Cell>
+        <Cell>{{post.lastErrorCode || '-'}}</Cell>
+        <Cell>{{post.attempts}}</Cell>
+        <Cell>
+          <Button
+            @click="send(post)"
+            :disabled="!canSend(post)"
+          >
+            <span v-if="isFailed(post)">
+              Retry
+            </span>
+            <span v-else>
+              Send
+            </span>
+          </Button>
+        </Cell>
+      </Row>
+    </Table>
+    <NoItemsMessage v-if="!hasAnyPosts">
       No posts yet
-    </div>
+    </NoItemsMessage>
   </div>
 </template>
 
@@ -77,7 +56,9 @@
 import { mapActions, mapMutations, mapState } from 'vuex';
 
 import Button from '../presenters/Button';
+import NoItemsMessage from '../presenters/NoItemsMessage';
 import PageTitle from '../presenters/PageTitle';
+import { Table, HeaderRow, HeaderCell, Row, Cell } from '../presenters/Table';
 
 import { POST_STATUSES } from '../../constants/post';
 
@@ -85,15 +66,13 @@ export default {
 
   components: {
     Button,
+    NoItemsMessage,
     PageTitle,
-  },
-
-  filters: {
-    date(value) {
-      const date = new Date(value);
-      const formattedDate = date.toLocaleString('ru-RU');
-      return formattedDate;
-    },
+    Table,
+    HeaderRow,
+    HeaderCell,
+    Row,
+    Cell,
   },
 
   computed: {
@@ -109,7 +88,7 @@ export default {
       return Number(this.$route.params.bundleId);
     },
 
-    hasAny() {
+    hasAnyPosts() {
       return this.posts.length > 0;
     }
   },
@@ -145,20 +124,3 @@ export default {
 
 };
 </script>
-
-<style module>
-.table {
-  text-align: left;
-  width: 100%;
-}
-
-.row {
-  border-bottom: 1px solid #e7e8ec;
-}
-
-.empty {
-  color: #818d99;
-  font-size: 18px;
-  text-align: center;
-}
-</style>
