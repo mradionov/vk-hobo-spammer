@@ -45,8 +45,8 @@ const module = {
     isAnyInProgress(state) {
       return state.progressId !== null;
     },
-    isQueueEmpty(state) {
-      return state.queue.length === 0;
+    hasQueueItems(state) {
+      return state.queue.length > 0;
     },
     nextQueueId(state) {
       return state.queue[0];
@@ -97,24 +97,27 @@ const module = {
   },
 
   actions: {
-    attemptSend({ commit, dispatch, getters, state }, id) {
+    attemptSend({ commit, dispatch, getters }, id) {
       const post = getters.get(id);
 
+      // If post is already in progress or sent, don't queue it and no need
+      // to send it.
       if (post.status === POST_STATUSES.progress
         || post.status === POST_STATUSES.sent
       ) {
         return;
       }
 
-      if (post.status === POST_STATUSES.queued
-        && !post.id === state.progressId
-      ) {
-        return;
-      }
+      // If there is something currently sending, queue the post
 
       if (getters.isAnyInProgress) {
         commit('addToQueue', id);
         return;
+      }
+
+      const firstQueueId = getters.nextQueueId;
+      if (firstQueueId === id) {
+        commit('shiftQueue', id);
       }
 
       commit('statusProgress', id);
@@ -127,17 +130,15 @@ const module = {
         });
 
         dispatch('attemptSendNext');
-      }, 20000);
+      }, 5000);
     },
 
-    attemptSendNext({ commit, dispatch, getters }) {
-      if (getters.isQueueEmpty) {
+    attemptSendNext({ dispatch, getters }) {
+      if (!getters.hasQueueItems) {
         return;
       }
 
       const queuedId = getters.nextQueueId;
-
-      commit('shiftQueue', queuedId);
 
       dispatch('attemptSend', queuedId);
     },

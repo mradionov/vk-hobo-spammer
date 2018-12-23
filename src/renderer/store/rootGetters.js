@@ -9,10 +9,10 @@ const rootGetters = {
   },
 
   canEdit(state, getters) {
-    const isPostsQueueEmpty = getters['posts/isQueueEmpty'];
-    const isAnyPostInProgress = getters['posts/isAnyPostInProgress'];
+    const hasPostsQueueItems = getters['posts/hasQueueItems'];
+    const isAnyPostInProgress = getters['posts/isAnyInProgress'];
 
-    const canEdit = isPostsQueueEmpty && !isAnyPostInProgress;
+    const canEdit = !hasPostsQueueItems && !isAnyPostInProgress;
 
     return canEdit;
   },
