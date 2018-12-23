@@ -13,7 +13,7 @@
       <HeaderRow slot="header">
         <HeaderCell>ID</HeaderCell>
         <HeaderCell>Title</HeaderCell>
-        <HeaderCell>Created at</HeaderCell>
+        <HeaderCell>Text</HeaderCell>
         <HeaderCell>Actions</HeaderCell>
         <HeaderCell>Bundles</HeaderCell>
       </HeaderRow>
@@ -22,9 +22,13 @@
         :key="message.id"
       >
         <Cell>{{message.id}}</Cell>
-        <Cell>{{message.title}}</Cell>
-        <Cell>{{message.createdAt | date}}</Cell>
-        <Cell>
+        <Cell :class="$style.titleCell">
+          {{message.title}}
+        </Cell>
+        <Cell :class="$style.textCell">
+          {{message.text}}
+        </Cell>
+        <Cell :class="$style.actionCell">
           <ButtonLink
             :class="$style.editButton"
             :disabled="!canEdit"
@@ -42,7 +46,7 @@
             Remove
           </Button>
         </Cell>
-        <Cell>
+        <Cell :class="$style.bundlesCell">
           <ButtonLink
             :to="{
               name: 'bundleIndex',
@@ -117,6 +121,28 @@ export default {
 </script>
 
 <style module>
+.titleCell {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.textCell {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actionCell {
+  width: 200px;
+}
+
+.bundlesCell {
+  width: 135px;
+}
+
 .editButton {
   margin-right: 5px;
 }

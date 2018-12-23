@@ -20,8 +20,8 @@
         <textarea
           :class="$style.input"
           v-model.trim="fields.text"
-          cols="60"
-          rows="15"
+          cols="100"
+          rows="30"
         >
         </textarea>
       </div>

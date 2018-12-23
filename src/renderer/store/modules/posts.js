@@ -35,11 +35,49 @@ const module = {
         );
       };
     },
+    getAllWaitingByBundle(state, getters) {
+      return (bundleId) => {
+        return getters.all.filter(post => post.bundleId === bundleId
+          && [
+            POST_STATUSES.idle,
+            POST_STATUSES.queued,
+            POST_STATUSES.progress,
+          ].includes(post.status),
+        );
+      };
+    },
+    getAllSentByBundle(state, getters) {
+      return (bundleId) => {
+        return getters.all.filter(post => post.bundleId === bundleId
+          && post.status === POST_STATUSES.sent,
+        );
+      };
+    },
     getAllFailedByBundle(state, getters) {
       return (bundleId) => {
         return getters.all.filter(post => post.bundleId === bundleId
           && post.status === POST_STATUSES.failed,
         );
+      };
+    },
+    countAllByBundle(state, getters) {
+      return (bundleId) => {
+        return getters.getAllByBundle(bundleId).length;
+      };
+    },
+    countAllWaitingByBundle(state, getters) {
+      return (bundleId) => {
+        return getters.getAllWaitingByBundle(bundleId).length;
+      };
+    },
+    countAllSentByBundle(state, getters) {
+      return (bundleId) => {
+        return getters.getAllSentByBundle(bundleId).length;
+      };
+    },
+    countAllFailedByBundle(state, getters) {
+      return (bundleId) => {
+        return getters.getAllFailedByBundle(bundleId).length;
       };
     },
     isAnyInProgress(state) {

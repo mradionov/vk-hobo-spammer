@@ -4,10 +4,10 @@
       Posts
       <div slot="actions">
         <Button @click="retryAll">
-          Retry all
+          Retry all failed
         </Button>
         <Button @click="sendAll">
-          Send all
+          Send all idle
         </Button>
       </div>
     </PageTitle>
@@ -15,7 +15,6 @@
       <HeaderRow slot="header">
         <HeaderCell>ID</HeaderCell>
         <HeaderCell>User</HeaderCell>
-        <HeaderCell>Created at</HeaderCell>
         <HeaderCell>Status</HeaderCell>
         <HeaderCell>Last error</HeaderCell>
         <HeaderCell>Attempts</HeaderCell>
@@ -27,7 +26,6 @@
       >
         <Cell>{{post.id}}</Cell>
         <Cell>{{post.user.first_name}} {{post.user.last_name}}</Cell>
-        <Cell>{{post.createdAt | date}}</Cell>
         <Cell>{{post.status}}</Cell>
         <Cell>{{post.lastErrorCode || '-'}}</Cell>
         <Cell>{{post.attempts}}</Cell>

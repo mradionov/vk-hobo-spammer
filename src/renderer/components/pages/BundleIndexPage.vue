@@ -17,7 +17,10 @@
     <Table v-if="hasAnyBundles">
       <HeaderRow slot="header">
         <HeaderCell>ID</HeaderCell>
-        <HeaderCell>Created at</HeaderCell>
+        <HeaderCell>Waiting</HeaderCell>
+        <HeaderCell>Sent</HeaderCell>
+        <HeaderCell>Failed</HeaderCell>
+        <HeaderCell>Total</HeaderCell>
         <HeaderCell>Actions</HeaderCell>
         <HeaderCell>Posts</HeaderCell>
       </HeaderRow>
@@ -26,8 +29,19 @@
         :key="bundle.id"
       >
         <Cell>{{bundle.id}}</Cell>
-        <Cell>{{bundle.createdAt | date}}</Cell>
-        <Cell>
+        <Cell :class="$style.countCell">
+          {{bundle.waitingPostsCount}}
+        </Cell>
+        <Cell :class="$style.countCell">
+          {{bundle.sentPostsCount}}
+        </Cell>
+        <Cell :class="$style.failedCountCell">
+          {{bundle.failedPostsCount}}
+        </Cell>
+        <Cell :class="$style.countCell">
+          {{bundle.totalPostsCount}}
+        </Cell>
+        <Cell :class="$style.actionCell">
           <ButtonLink
             :class="$style.editButton"
             :disabled="!canEdit"
@@ -48,7 +62,7 @@
             Remove
           </Button>
         </Cell>
-        <Cell>
+        <Cell :class="$style.postsCell">
           <ButtonLink
             :to="{
               name: 'postIndex',
@@ -91,6 +105,10 @@ export default {
 
   computed: {
     ...mapGetters({
+      countAllWaitingPostsByBundle: 'posts/countAllWaitingByBundle',
+      countAllSentPostsByBundle: 'posts/countAllSentByBundle',
+      countAllFailedPostsByBundle: 'posts/countAllFailedByBundle',
+      countAllPostsByBundle: 'posts/countAllByBundle',
       canEdit: 'canEdit',
       canRemove: 'canRemove',
     }),
@@ -99,7 +117,21 @@ export default {
       bundles(state) {
         return state.ids
           .map(id => state.map[id])
-          .filter(bundle => bundle.messageId === this.messageId);
+          .filter(bundle => bundle.messageId === this.messageId)
+          .map((bundle) => {
+            const waitingPostsCount = this.countAllWaitingPostsByBundle(bundle.id);
+            const sentPostsCount = this.countAllSentPostsByBundle(bundle.id);
+            const failedPostsCount = this.countAllFailedPostsByBundle(bundle.id);
+            const totalPostsCount = this.countAllPostsByBundle(bundle.id);
+
+            return {
+              ...bundle,
+              waitingPostsCount,
+              sentPostsCount,
+              failedPostsCount,
+              totalPostsCount,
+            };
+          });
       },
     }),
 
@@ -135,5 +167,22 @@ export default {
 <style module>
 .editButton {
   margin-right: 5px;
+}
+
+.failedCountCell {
+  color: #ED4C49;
+  width: 80px;
+}
+
+.countCell {
+  width: 80px;
+}
+
+.actionCell {
+  width: 200px;
+}
+
+.postsCell {
+  width: 135px;
 }
 </style>

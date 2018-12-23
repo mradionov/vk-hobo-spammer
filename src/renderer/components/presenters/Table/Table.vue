@@ -11,6 +11,7 @@
 
 <style module>
 .table {
+  border-collapse: collapse;
   text-align: left;
   width: 100%;
 }
