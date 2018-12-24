@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Button from '../presenters/Button';
 import MessageForm from '../forms/MessageForm';
@@ -25,12 +25,12 @@ export default {
   },
 
   methods: {
-    ...mapMutations('messages', [
-      'create',
-    ]),
+    ...mapActions({
+      'createMessage': 'messages/create',
+    }),
 
     submit(data) {
-      this.create(data);
+      this.createMessage(data);
       this.$router.push('/message/index');
     },
 

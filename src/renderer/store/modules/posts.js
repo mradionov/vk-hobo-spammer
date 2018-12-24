@@ -2,232 +2,254 @@ import Vue from 'vue';
 
 import { POST_ERROR_CODES, POST_STATUSES } from '../../constants/post';
 
-const module = {
+function createModule({ api }) {
+  const module = {
 
-  namespaced: true,
+    namespaced: true,
 
-  state: {
-    ids: [],
-    map: {},
+    state: {
+      ids: [],
+      map: {},
 
-    queue: [],
-    progressId: null,
-  },
-
-  getters: {
-    all(state) {
-      return state.ids.map(id => state.map[id]);
-    },
-    get(state) {
-      return (id) => {
-        return state.map[id];
-      };
-    },
-    getAllByBundle(state, getters) {
-      return (bundleId) => {
-        return getters.all.filter(post => post.bundleId === bundleId);
-      };
-    },
-    getAllIdleByBundle(state, getters) {
-      return (bundleId) => {
-        return getters.all.filter(post => post.bundleId === bundleId
-          && post.status === POST_STATUSES.idle,
-        );
-      };
-    },
-    getAllWaitingByBundle(state, getters) {
-      return (bundleId) => {
-        return getters.all.filter(post => post.bundleId === bundleId
-          && [
-            POST_STATUSES.idle,
-            POST_STATUSES.queued,
-            POST_STATUSES.progress,
-          ].includes(post.status),
-        );
-      };
-    },
-    getAllSentByBundle(state, getters) {
-      return (bundleId) => {
-        return getters.all.filter(post => post.bundleId === bundleId
-          && post.status === POST_STATUSES.sent,
-        );
-      };
-    },
-    getAllFailedByBundle(state, getters) {
-      return (bundleId) => {
-        return getters.all.filter(post => post.bundleId === bundleId
-          && post.status === POST_STATUSES.failed,
-        );
-      };
-    },
-    countAllByBundle(state, getters) {
-      return (bundleId) => {
-        return getters.getAllByBundle(bundleId).length;
-      };
-    },
-    countAllWaitingByBundle(state, getters) {
-      return (bundleId) => {
-        return getters.getAllWaitingByBundle(bundleId).length;
-      };
-    },
-    countAllSentByBundle(state, getters) {
-      return (bundleId) => {
-        return getters.getAllSentByBundle(bundleId).length;
-      };
-    },
-    countAllFailedByBundle(state, getters) {
-      return (bundleId) => {
-        return getters.getAllFailedByBundle(bundleId).length;
-      };
-    },
-    isAnyInProgress(state) {
-      return state.progressId !== null;
-    },
-    hasQueueItems(state) {
-      return state.queue.length > 0;
-    },
-    nextQueueId(state) {
-      return state.queue[0];
-    },
-  },
-
-  mutations: {
-    add(state, post) {
-      state.ids.push(post.id);
-      state.map[post.id] = post;
+      queue: [],
+      progressId: null,
     },
 
-    remove(state, idToRemove) {
-      state.ids = state.ids.filter(id => id !== idToRemove);
-      delete state.map[idToRemove];
+    getters: {
+      all(state) {
+        return state.ids.map(id => state.map[id]);
+      },
+      get(state) {
+        return (id) => {
+          return state.map[id];
+        };
+      },
+      getAllByBundle(state, getters) {
+        return (bundleId) => {
+          return getters.all.filter(post => post.bundleId === bundleId);
+        };
+      },
+      getAllIdleByBundle(state, getters) {
+        return (bundleId) => {
+          return getters.all.filter(post => post.bundleId === bundleId
+            && post.status === POST_STATUSES.idle,
+          );
+        };
+      },
+      getAllWaitingByBundle(state, getters) {
+        return (bundleId) => {
+          return getters.all.filter(post => post.bundleId === bundleId
+            && [
+              POST_STATUSES.idle,
+              POST_STATUSES.queued,
+              POST_STATUSES.progress,
+            ].includes(post.status),
+          );
+        };
+      },
+      getAllSentByBundle(state, getters) {
+        return (bundleId) => {
+          return getters.all.filter(post => post.bundleId === bundleId
+            && post.status === POST_STATUSES.sent,
+          );
+        };
+      },
+      getAllFailedByBundle(state, getters) {
+        return (bundleId) => {
+          return getters.all.filter(post => post.bundleId === bundleId
+            && post.status === POST_STATUSES.failed,
+          );
+        };
+      },
+      countAllByBundle(state, getters) {
+        return (bundleId) => {
+          return getters.getAllByBundle(bundleId).length;
+        };
+      },
+      countAllWaitingByBundle(state, getters) {
+        return (bundleId) => {
+          return getters.getAllWaitingByBundle(bundleId).length;
+        };
+      },
+      countAllSentByBundle(state, getters) {
+        return (bundleId) => {
+          return getters.getAllSentByBundle(bundleId).length;
+        };
+      },
+      countAllFailedByBundle(state, getters) {
+        return (bundleId) => {
+          return getters.getAllFailedByBundle(bundleId).length;
+        };
+      },
+      isAnyInProgress(state) {
+        return state.progressId !== null;
+      },
+      hasQueueItems(state) {
+        return state.queue.length > 0;
+      },
+      nextQueueId(state) {
+        return state.queue[0];
+      },
     },
 
-    addToQueue(state, id) {
-      state.queue.push(id);
-      Vue.set(state.map[id], 'status', POST_STATUSES.queued);
+    mutations: {
+      add(state, post) {
+        state.ids.push(post.id);
+        Vue.set(state.map, post.id, post);
+      },
+
+      remove(state, idToRemove) {
+        state.ids = state.ids.filter(id => id !== idToRemove);
+        delete state.map[idToRemove];
+      },
+
+      addToQueue(state, id) {
+        state.queue.push(id);
+        Vue.set(state.map[id], 'status', POST_STATUSES.queued);
+      },
+
+      shiftQueue(state, id) {
+        if (state.queue[0] === id) {
+          state.queue.shift();
+        }
+      },
+
+      statusProgress(state, id) {
+        Vue.set(state.map[id], 'status', POST_STATUSES.progress);
+
+        state.progressId = id;
+      },
+
+      statusSent(state, id) {
+        Vue.set(state.map[id], 'status', POST_STATUSES.sent);
+        Vue.set(state.map[id], 'lastErrorCode', null);
+
+        state.progressId = null;
+      },
+
+      statusFailed(state, { id, lastErrorCode }) {
+        const post = state.map[id];
+
+        Vue.set(post, 'status', POST_STATUSES.failed);
+        Vue.set(post, 'lastErrorCode', lastErrorCode);
+        Vue.set(post, 'attempts', post.attempts + 1);
+
+        state.progressId = null;
+      },
     },
 
-    shiftQueue(state, id) {
-      if (state.queue[0] === id) {
-        state.queue.shift();
-      }
-    },
+    actions: {
+      async attemptSend({ commit, dispatch, getters, rootGetters }, id) {
+        const post = getters.get(id);
 
-    statusProgress(state, id) {
-      state.progressId = id;
-      Vue.set(state.map[id], 'status', POST_STATUSES.progress);
-    },
+        // // If post is already in progress or sent, don't queue it and no need
+        // // to send it.
+        // if (post.status === POST_STATUSES.progress
+        //   || post.status === POST_STATUSES.sent
+        // ) {
+        //   return;
+        // }
 
-    statusSent(state, id) {
-      Vue.set(state.map[id], 'status', POST_STATUSES.sent);
-      state.progressId = null;
-    },
+        // // If there is something currently sending, queue the post
 
-    statusFailed(state, { id, lastErrorCode }) {
-      const post = state.map[id];
+        // if (getters.isAnyInProgress) {
+        //   commit('addToQueue', id);
+        //   return;
+        // }
 
-      Vue.set(post, 'status', POST_STATUSES.failed);
-      Vue.set(post, 'lastErrorCode', lastErrorCode);
-      Vue.set(post, 'attempts', post.attempts + 1);
+        // const firstQueueId = getters.nextQueueId;
+        // if (firstQueueId === id) {
+        //   commit('shiftQueue', id);
+        // }
 
-      state.progressId = null;
-    },
-  },
+        // commit('statusProgress', id);
 
-  actions: {
-    attemptSend({ commit, dispatch, getters }, id) {
-      const post = getters.get(id);
+        const bundle = rootGetters['bundles/getById'](post.bundleId);
+        const message = rootGetters['messages/getById'](bundle.messageId);
 
-      // If post is already in progress or sent, don't queue it and no need
-      // to send it.
-      if (post.status === POST_STATUSES.progress
-        || post.status === POST_STATUSES.sent
-      ) {
-        return;
-      }
+        try {
+          const peerId = post.user.id;
+          const randomId = message.id;
+          const text = message.text;
 
-      // If there is something currently sending, queue the post
+          await api.sendMessage(peerId, randomId, text);
 
-      if (getters.isAnyInProgress) {
-        commit('addToQueue', id);
-        return;
-      }
+          commit('statusSent', id);
 
-      const firstQueueId = getters.nextQueueId;
-      if (firstQueueId === id) {
-        commit('shiftQueue', id);
-      }
+        } catch (err) {
+          console.error(err);
 
-      commit('statusProgress', id);
+          commit('statusFailed', {
+            id,
+            lastErrorCode: POST_ERROR_CODES.unknown,
+          });
+        }
 
-      setTimeout(() => {
-        // commit('statusSent', id);
-        commit('statusFailed', {
-          id,
-          lastErrorCode: POST_ERROR_CODES.unknown,
+        setTimeout(() => {
+          dispatch('attemptSendNext');
+        }, 1000);
+      },
+
+      attemptSendNext({ dispatch, getters }) {
+        if (!getters.hasQueueItems) {
+          return;
+        }
+
+        const queuedId = getters.nextQueueId;
+
+        dispatch('attemptSend', queuedId);
+      },
+
+      attemptSendAllByBundle({ dispatch, getters }, bundleId) {
+        const idlePosts = getters.getAllIdleByBundle(bundleId);
+
+        idlePosts.forEach((post) => {
+          dispatch('attemptSend', post.id);
         });
+      },
 
-        dispatch('attemptSendNext');
-      }, 5000);
+      attemptRetryAllByBundle({ dispatch, getters }, bundleId) {
+        const failedPosts = getters.getAllFailedByBundle(bundleId);
+
+        failedPosts.forEach((post) => {
+          dispatch('attemptSend', post.id);
+        });
+      },
+
+      create({ commit, state }, payload) {
+        const ids = state.ids.length ? state.ids : [0];
+        const maxId = Math.max(...ids);
+        const id = maxId + 1;
+
+        const post = payload;
+        post.id = id;
+        post.createdAt = Date.now();
+        post.status = POST_STATUSES.idle;
+        post.lastErrorCode = null;
+        post.attempts = 0;
+
+        commit('add', post);
+
+        return id;
+      },
+
+      remove({ commit }, id) {
+        commit('remove', id);
+      },
+
+      removeAllByBundle({ dispatch, getters }, bundleId) {
+        const posts = getters.getAllByBundle(bundleId);
+
+        posts.forEach((post) => {
+          dispatch('remove', post.id);
+        });
+      },
+
     },
 
-    attemptSendNext({ dispatch, getters }) {
-      if (!getters.hasQueueItems) {
-        return;
-      }
+  };
 
-      const queuedId = getters.nextQueueId;
+  return module;
+}
 
-      dispatch('attemptSend', queuedId);
-    },
-
-    attemptSendAllByBundle({ dispatch, getters }, bundleId) {
-      const idlePosts = getters.getAllIdleByBundle(bundleId);
-
-      idlePosts.forEach((post) => {
-        dispatch('attemptSend', post.id);
-      });
-    },
-
-    attemptRetryAllByBundle({ dispatch, getters }, bundleId) {
-      const failedPosts = getters.getAllFailedByBundle(bundleId);
-
-      failedPosts.forEach((post) => {
-        dispatch('attemptSend', post.id);
-      });
-    },
-
-    create({ commit, state }, payload) {
-      const ids = state.ids.length ? state.ids : [0];
-      const maxId = Math.max(...ids);
-      const id = maxId + 1;
-
-      const post = payload;
-      post.id = id;
-      post.createdAt = Date.now();
-      post.status = POST_STATUSES.idle;
-      post.lastErrorCode = null;
-      post.attempts = 0;
-
-      commit('add', post);
-
-      return id;
-    },
-
-    remove({ commit }, id) {
-      commit('remove', id);
-    },
-
-    removeAllByBundle({ dispatch, getters }, bundleId) {
-      const posts = getters.getAllByBundle(bundleId);
-
-      posts.forEach((post) => {
-        dispatch('remove', post.id);
-      });
-    },
-
-  },
-
-};
-
-export default module;
+export default createModule;

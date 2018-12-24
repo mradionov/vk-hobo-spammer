@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 import MessageForm from '../forms/MessageForm';
 import PageTitle from '../presenters/PageTitle';
@@ -24,9 +24,13 @@ export default {
   },
 
   computed: {
-    ...mapGetters('messages', [
-      'getById',
-    ]),
+    ...mapGetters({
+      getMessageById: 'messages/getById',
+    }),
+
+    messageId() {
+      return this.$route.params.messageId;
+    },
   },
 
   data() {
@@ -36,16 +40,16 @@ export default {
   },
 
   mounted() {
-    this.message = this.getById(this.$route.params.messageId);
+    this.message = this.getMessageById(this.messageId);
   },
 
   methods: {
-    ...mapMutations('messages', [
-      'update',
-    ]),
+    ...mapActions({
+      'updateMessage': 'messages/update',
+    }),
 
     submit(data) {
-      this.update(data);
+      this.updateMessage(data);
       this.$router.push('/message/index');
     },
 

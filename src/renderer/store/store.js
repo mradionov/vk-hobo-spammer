@@ -10,9 +10,9 @@ import setupHTTP from './setup/setupHTTP';
 import session from './modules/session';
 import messages from './modules/messages';
 import bundles from './modules/bundles';
-import posts from './modules/posts';
+import createPostsModule from './modules/posts';
 
-function createStore({ ipc, http }) {
+function createStore({ api, ipc, http }) {
   Vue.use(Vuex);
 
   const store = new Vuex.Store({
@@ -22,7 +22,7 @@ function createStore({ ipc, http }) {
       session,
       messages,
       bundles,
-      posts,
+      posts: createPostsModule({ api }),
     },
   });
 

@@ -122,7 +122,7 @@ export default {
 
 <style module>
 .titleCell {
-  max-width: 100px;
+  max-width: 70px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

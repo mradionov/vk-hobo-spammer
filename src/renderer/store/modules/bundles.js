@@ -1,3 +1,5 @@
+import Vue from 'vue';
+
 const module = {
 
   namespaced: true,
@@ -26,7 +28,7 @@ const module = {
   mutations: {
     add(state, bundle) {
       state.ids.push(bundle.id);
-      state.map[bundle.id] = bundle;
+      Vue.set(state.map, bundle.id, bundle);
     },
     update(state, payload) {
       const id = payload.id;
@@ -48,7 +50,6 @@ const module = {
       const bundle = payload;
       bundle.id = id;
       bundle.createdAt = Date.now();
-      bundle.status = 'idle';
 
       commit('add', bundle);
 

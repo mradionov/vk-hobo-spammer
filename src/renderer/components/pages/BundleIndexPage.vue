@@ -32,7 +32,7 @@
         <Cell :class="$style.countCell">
           {{bundle.waitingPostsCount}}
         </Cell>
-        <Cell :class="$style.countCell">
+        <Cell :class="$style.sentCountCell">
           {{bundle.sentPostsCount}}
         </Cell>
         <Cell :class="$style.failedCountCell">
@@ -87,6 +87,7 @@ import Button from '../presenters/Button';
 import ButtonLink from '../presenters/ButtonLink';
 import NoItemsMessage from '../presenters/NoItemsMessage';
 import PageTitle from '../presenters/PageTitle';
+import StatusText from '../presenters/StatusText';
 import { Table, HeaderRow, HeaderCell, Row, Cell } from '../presenters/Table';
 
 export default {
@@ -96,6 +97,7 @@ export default {
     ButtonLink,
     NoItemsMessage,
     PageTitle,
+    StatusText,
     Table,
     HeaderRow,
     HeaderCell,
@@ -169,8 +171,15 @@ export default {
   margin-right: 5px;
 }
 
+.sentCountCell {
+  color: #40964c;
+  font-weight: bold;
+  width: 80px;
+}
+
 .failedCountCell {
-  color: #ED4C49;
+  color: #dc5b59;
+  font-weight: bold;
   width: 80px;
 }
 

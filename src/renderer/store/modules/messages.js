@@ -5,6 +5,7 @@ const module = {
   state: {
     ids: [],
     map: {},
+    lastId: 0,
   },
 
   getters: {
@@ -19,22 +20,16 @@ const module = {
   },
 
   mutations: {
-    create(state, payload) {
-      const ids = state.ids.length ? state.ids : [0];
-      const maxId = Math.max(...ids);
-      const id = maxId + 1;
+    create(state, messageData) {
+      state.ids.push(messageData.id);
+      state.map[messageData.id] = messageData;
 
-      const message = payload;
-      message.id = id;
-      message.createdAt = Date.now();
-
-      state.ids.push(id);
-      state.map[id] = message;
+      state.lastId = messageData.id;
     },
-    update(state, payload) {
-      const id = payload.id;
+    update(state, messageData) {
+      const id = messageData.id;
 
-      state.map[id] = payload;
+      state.map[id] = messageData;
     },
     remove(state, idToRemove) {
       state.ids = state.ids.filter(id => id !== idToRemove);
@@ -43,6 +38,22 @@ const module = {
   },
 
   actions: {
+    create({ commit, state }, messageData) {
+      const id = state.lastId + 1;
+
+      const message = messageData;
+      message.id = id;
+      message.createdAt = Date.now();
+
+      commit('create', message);
+
+      return id;
+    },
+
+    update({ commit }, messageData) {
+      commit('update', messageData);
+    },
+
     remove({ commit, dispatch }, id) {
       commit('remove', id);
       dispatch('bundles/removeAllByMessage', id, { root: true });

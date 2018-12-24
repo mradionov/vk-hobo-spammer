@@ -1,5 +1,6 @@
 function setupPersist(store, ipc) {
   store.subscribe((mutation) => {
+    console.log('persist', mutation);
     if (mutation.type === 'reset') {
       return;
     }

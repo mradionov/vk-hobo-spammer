@@ -26,7 +26,9 @@
       >
         <Cell>{{post.id}}</Cell>
         <Cell>{{post.user.first_name}} {{post.user.last_name}}</Cell>
-        <Cell>{{post.status}}</Cell>
+        <Cell>
+          <StatusText :status="post.status" />
+        </Cell>
         <Cell>{{post.lastErrorCode || '-'}}</Cell>
         <Cell>{{post.attempts}}</Cell>
         <Cell>
@@ -56,6 +58,7 @@ import { mapActions, mapMutations, mapState } from 'vuex';
 import Button from '../presenters/Button';
 import NoItemsMessage from '../presenters/NoItemsMessage';
 import PageTitle from '../presenters/PageTitle';
+import StatusText from '../presenters/StatusText';
 import { Table, HeaderRow, HeaderCell, Row, Cell } from '../presenters/Table';
 
 import { POST_STATUSES } from '../../constants/post';
@@ -66,6 +69,7 @@ export default {
     Button,
     NoItemsMessage,
     PageTitle,
+    StatusText,
     Table,
     HeaderRow,
     HeaderCell,

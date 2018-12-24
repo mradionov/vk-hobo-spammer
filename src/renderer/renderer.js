@@ -20,7 +20,7 @@ const http = new HTTPClient({
 const api = new VKApi(http);
 const ipc = new IPCClient();
 
-const store = createStore({ ipc, http });
+const store = createStore({ api, ipc, http });
 const router = createRouter(store);
 
 const app = new Vue({
