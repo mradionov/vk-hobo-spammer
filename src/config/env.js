@@ -1,6 +1,4 @@
-const ENV_DEVELOPMENT = 'development';
+const electron = require('electron');
 
-const env = process.env.NODE_ENV || ENV_DEVELOPMENT;
-
-exports.isDev = () => env === ENV_DEVELOPMENT;
-exports.isProd = () => !this.isDev();
+exports.isProd = () => electron.app.isPackaged;
+exports.isDev = () => !this.isProd();

@@ -17,9 +17,9 @@ app.on('ready', () => {
   const url = `file://${__dirname}/renderer/index.html`;
   window = new BrowserWindow();
   window.loadURL(url);
+  window.maximize();
 
   if (isDev()) {
-    window.maximize();
     window.webContents.openDevTools();
   }
 });
