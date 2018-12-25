@@ -16,8 +16,8 @@
     "build": "npm run build:renderer",
     "watch": "npm run watch:renderer",
     "start": "NODE_ENV=development electron .",
-    "package": "node ./packager/package.js",
-    "lint": "eslint packager src webpack",
+    "package": "electron-builder -lw --windows portable",
+    "lint": "eslint src webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -30,7 +30,7 @@
   "devDependencies": {
     "css-loader": "^1.0.1",
     "electron": "^3.0.10",
-    "electron-packager": "^13.0.0",
+    "electron-builder": "^20.38.4",
     "eslint": "^5.9.0",
     "eslint-import-resolver-webpack": "^0.8.4",
     "eslint-plugin-vue": "^4.7.1",

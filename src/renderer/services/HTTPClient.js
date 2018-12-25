@@ -57,8 +57,6 @@ class HTTPClient {
       method,
     };
 
-    console.log({ fetchOptions });
-
     const response = await fetch(url, fetchOptions);
     const data = await response.json();
 
