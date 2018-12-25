@@ -46,6 +46,6 @@ export default {
 }
 
 .failed {
-  color: #dc5b59;
+  color: #de0400;
 }
 </style>

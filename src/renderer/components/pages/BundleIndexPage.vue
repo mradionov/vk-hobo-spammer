@@ -178,7 +178,7 @@ export default {
 }
 
 .failedCountCell {
-  color: #dc5b59;
+  color: #de0400;
   font-weight: bold;
   width: 80px;
 }

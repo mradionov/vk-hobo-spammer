@@ -29,7 +29,9 @@
         <Cell>
           <StatusText :status="post.status" />
         </Cell>
-        <Cell>{{post.lastErrorCode || '-'}}</Cell>
+        <Cell>
+          <ErrorText :code="post.lastErrorCode" />
+        </Cell>
         <Cell>{{post.attempts}}</Cell>
         <Cell>
           <Button
@@ -56,6 +58,7 @@
 import { mapActions, mapMutations, mapState } from 'vuex';
 
 import Button from '../presenters/Button';
+import ErrorText from '../presenters/ErrorText';
 import NoItemsMessage from '../presenters/NoItemsMessage';
 import PageTitle from '../presenters/PageTitle';
 import StatusText from '../presenters/StatusText';
@@ -67,6 +70,7 @@ export default {
 
   components: {
     Button,
+    ErrorText,
     NoItemsMessage,
     PageTitle,
     StatusText,

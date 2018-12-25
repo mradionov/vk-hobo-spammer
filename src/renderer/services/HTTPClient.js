@@ -3,13 +3,15 @@ import queryStringHelper from 'querystring';
 import { defaultsDeep } from 'lodash';
 
 const METHOD_GET = 'GET';
+const METHOD_POST = 'POST';
 
 class HTTPClient {
   constructor(defaultOptions = {}) {
     this.defaultOptions = defaultsDeep(defaultOptions, {
       baseURL: '',
-      method: METHOD_GET,
+      headers: {},
       params: {},
+      data: {},
     });
 
     this.optionsInterceptors = [];
@@ -23,25 +25,39 @@ class HTTPClient {
     return this.request(METHOD_GET, pathname, options);
   }
 
+  async post(pathname, options) {
+    return this.request(METHOD_POST, pathname, options);
+  }
+
   async request(method, pathname, requestOptions = {}) {
-    let options = defaultsDeep({}, requestOptions, this.defaultOptions, {
-      method,
-      pathname,
-    });
+    let options = defaultsDeep({}, requestOptions, this.defaultOptions);
 
     this.optionsInterceptors.forEach((interceptor) => {
       options = interceptor(options);
     });
 
-    let url = [options.baseURL, options.pathname].join('/');
+    let url = [options.baseURL, pathname].join('/');
     const queryString = queryStringHelper.stringify(options.params);
     if (queryString.length > 0) {
       url += `?${queryString}`;
     }
 
+    const headers = options.headers;
+
+    let body = null;
+
+    if (method === METHOD_POST) {
+      headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      body = queryStringHelper.stringify(options.data);
+    }
+
     const fetchOptions = {
-      method: options.method,
+      body,
+      headers,
+      method,
     };
+
+    console.log({ fetchOptions });
 
     const response = await fetch(url, fetchOptions);
     const data = await response.json();

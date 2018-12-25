@@ -24,6 +24,16 @@
           rows="30"
         >
         </textarea>
+        <br />
+        <br />
+        <span
+          :class="{
+            [$style.maxText]: isTextCountExceeded
+          }
+        ">
+          Character count:
+          <b>{{characterCount}}/{{maxCount}}</b>
+        </span>
       </div>
     </div>
     <hr />
@@ -61,9 +71,21 @@ export default {
     return {
       fields: this.initialValues || {
         title: '',
-        message: '',
+        text: '',
       },
     };
+  },
+
+  computed: {
+    characterCount() {
+      return this.fields.text.length;
+    },
+    maxCount() {
+      return 4096;
+    },
+    isTextCountExceeded() {
+      return this.characterCount >= this.maxCount;
+    },
   },
 
   watch: {
@@ -101,5 +123,9 @@ export default {
   color: #000;
   margin: 0;
   padding: 3px 5px;
+}
+
+.maxText {
+  color: #de0400;
 }
 </style>

@@ -1,3 +1,12 @@
+function VKError(errorData = {}) {
+  this.name = 'VKError';
+  this.message = errorData.error_msg || 'Unknown';
+  this.vkCode = errorData.error_code || 0;
+  this.code = `vk:${this.vkCode}`;
+}
+
+VKError.prototype = Object.create(Error.prototype);
+
 class VKApi {
   constructor(http) {
     this.http = http;
@@ -38,8 +47,10 @@ class VKApi {
   }
 
   async sendMessage(peerId, randomId, message) {
-    const data = await this.http.get('messages.send', {
+    const data = await this.http.post('messages.send', {
       params: {
+      },
+      data: {
         peer_id: peerId,
         random_id: randomId,
         message,
@@ -48,7 +59,7 @@ class VKApi {
 
     const { error, response } = data;
     if (error !== undefined) {
-      throw error;
+      throw new VKError(error);
     }
 
     const result = response;
@@ -57,5 +68,10 @@ class VKApi {
 }
 
 VKApi.TOKEN_ERROR = 5;
+VKApi.BAD_REQUEST = 100;
+
+export {
+  VKError,
+};
 
 export default VKApi;

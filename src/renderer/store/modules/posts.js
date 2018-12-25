@@ -1,5 +1,6 @@
 import Vue from 'vue';
 
+import { VKError } from '../../services/VKApi';
 import { POST_ERROR_CODES, POST_STATUSES } from '../../constants/post';
 
 function createModule({ api }) {
@@ -142,27 +143,27 @@ function createModule({ api }) {
       async attemptSend({ commit, dispatch, getters, rootGetters }, id) {
         const post = getters.get(id);
 
-        // // If post is already in progress or sent, don't queue it and no need
-        // // to send it.
-        // if (post.status === POST_STATUSES.progress
-        //   || post.status === POST_STATUSES.sent
-        // ) {
-        //   return;
-        // }
+        // If post is already in progress or sent, don't queue it and no need
+        // to send it.
+        if (post.status === POST_STATUSES.progress
+          || post.status === POST_STATUSES.sent
+        ) {
+          return;
+        }
 
-        // // If there is something currently sending, queue the post
+        // If there is something currently sending, queue the post
 
-        // if (getters.isAnyInProgress) {
-        //   commit('addToQueue', id);
-        //   return;
-        // }
+        if (getters.isAnyInProgress) {
+          commit('addToQueue', id);
+          return;
+        }
 
-        // const firstQueueId = getters.nextQueueId;
-        // if (firstQueueId === id) {
-        //   commit('shiftQueue', id);
-        // }
+        const firstQueueId = getters.nextQueueId;
+        if (firstQueueId === id) {
+          commit('shiftQueue', id);
+        }
 
-        // commit('statusProgress', id);
+        commit('statusProgress', id);
 
         const bundle = rootGetters['bundles/getById'](post.bundleId);
         const message = rootGetters['messages/getById'](bundle.messageId);
@@ -177,11 +178,9 @@ function createModule({ api }) {
           commit('statusSent', id);
 
         } catch (err) {
-          console.error(err);
-
           commit('statusFailed', {
             id,
-            lastErrorCode: POST_ERROR_CODES.unknown,
+            lastErrorCode: err.code,
           });
         }
 
