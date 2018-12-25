@@ -9,9 +9,7 @@ const options = {
   dir: rootDir,
   out: distDir,
   arch: 'x64',
-  ignore: [
-    /node_modules/,
-  ],
+  asar: true,
   overwrite: true,
   platform: [
     'linux',
@@ -21,8 +19,10 @@ const options = {
 
 packager(options, (err, appPaths) => {
   if (err) {
+    // eslint-disable-next-line no-console
     console.error(err);
   } else {
+    // eslint-disable-next-line no-console
     console.log('Done: ', appPaths);
   }
 });

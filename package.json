@@ -2,7 +2,7 @@
   "name": "vk-hobo-spammer",
   "version": "0.1.0",
   "private": true,
-  "description": "VKontakte send private messages in bulk",
+  "description": "VK private message sender",
   "license": "MIT",
   "author": "Michael Radionov (https://github.com/mradionov)",
   "repository": {
@@ -16,7 +16,7 @@
     "build": "npm run build:renderer",
     "watch": "npm run watch:renderer",
     "start": "NODE_ENV=development electron .",
-    "package": "node ./package/package.js",
+    "package": "node ./packager/package.js",
     "lint": "eslint packager src webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
