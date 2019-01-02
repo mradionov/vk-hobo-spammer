@@ -1,5 +1,6 @@
 <template>
   <button
+    type="button"
     :class="$style.container"
     @click="$emit('click', $event)"
   >

@@ -15,7 +15,7 @@ class VKApi {
   async getFriends() {
     const data = await this.http.get('friends.get', {
       params: {
-        fields: 'first_name,last_name',
+        fields: 'first_name,last_name,photo_50,city',
         order: 'name',
       },
     });

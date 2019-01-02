@@ -4,7 +4,7 @@
       Edit Bundle
     </PageTitle>
     <BundleForm
-      :userIds="userIds"
+      :initialValues="bundle"
       @submit="submit"
     />
   </div>
@@ -32,25 +32,26 @@ export default {
       return Number(this.$route.params.messageId);
     },
     ...mapGetters({
+      'getBundleById': 'bundles/getById',
       'getPostsAllByBundle': 'posts/getAllByBundle',
     }),
   },
 
   data() {
     return {
-      initialValues: null,
+      bundle: null,
       posts: [],
-      userIds: [],
     };
   },
 
   mounted() {
+    this.bundle = this.getBundleById(this.bundleId);
     this.posts = this.getPostsAllByBundle(this.bundleId);
-    this.userIds = this.posts.map(post => post.user.id);
   },
 
   methods: {
     ...mapActions({
+      updateBundle: 'bundles/update',
       createPost: 'posts/create',
       removePost: 'posts/remove',
     }),
@@ -59,10 +60,17 @@ export default {
       const messageId = this.messageId;
       const bundleId = this.bundleId;
 
+      const bundleData = {
+        ...this.bundle,
+        messageId,
+        title: formData.title,
+        userIds: formData.userIds,
+      };
+
       const newUsers = formData.users;
       const newUserIds = newUsers.map(user => user.id);
 
-      const prevUserIds = this.posts.map(post => post.user.id);
+      const prevUserIds = this.bundle.userIds;
       const addedUsers = newUsers.filter(user =>
         !prevUserIds.includes(user.id),
       );
@@ -82,6 +90,8 @@ export default {
       removedPostIds.forEach((post) => {
         this.removePost(post.id);
       });
+
+      this.updateBundle(bundleData);
 
       this.$router.go(-1);
     },

@@ -40,8 +40,12 @@ export default {
     async submit(formData) {
       const messageId = this.messageId;
 
+      const userIds = formData.users.map(user => user.id);
+
       const bundleData = {
         messageId,
+        title: formData.title,
+        userIds,
       };
 
       const bundleId = await this.createBundle(bundleData);

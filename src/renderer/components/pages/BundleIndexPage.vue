@@ -17,6 +17,7 @@
     <Table v-if="hasAnyBundles">
       <HeaderRow slot="header">
         <HeaderCell>ID</HeaderCell>
+        <HeaderCell>Title</HeaderCell>
         <HeaderCell>Waiting</HeaderCell>
         <HeaderCell>Sent</HeaderCell>
         <HeaderCell>Failed</HeaderCell>
@@ -29,6 +30,9 @@
         :key="bundle.id"
       >
         <Cell>{{bundle.id}}</Cell>
+        <Cell :class="$style.titleCell">
+          {{bundle.title}}
+        </Cell>
         <Cell :class="$style.countCell">
           {{bundle.waitingPostsCount}}
         </Cell>
@@ -169,6 +173,13 @@ export default {
 <style module>
 .editButton {
   margin-right: 5px;
+}
+
+.titleCell {
+  max-width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sentCountCell {

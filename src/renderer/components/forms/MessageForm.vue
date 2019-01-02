@@ -1,22 +1,19 @@
 <template>
   <div>
-    <div :class="$style.group">
-      <div :class="$style.label">
-        Title:
-      </div>
-      <div :class="$style.field">
+    <Group>
+      <Label>Title</Label>
+      <Field>
         <input
           :class="$style.input"
           type="text"
           v-model.trim="fields.title"
         />
-      </div>
-    </div>
-    <div :class="$style.group">
-      <div :class="$style.label">
-        Text:
-      </div>
-      <div :class="$style.field">
+      </Field>
+    </Group>
+
+    <Group>
+      <Label>Text</Label>
+      <Field>
         <textarea
           :class="$style.input"
           v-model.trim="fields.text"
@@ -34,27 +31,33 @@
           Character count:
           <b>{{characterCount}}/{{maxCount}}</b>
         </span>
-      </div>
-    </div>
+      </Field>
+    </Group>
+
     <hr />
-    <div :class="$style.group ">
-      <div :class="$style.label" />
-      <div :class="$style.field">
+
+    <Group>
+      <Label />
+      <Field>
         <Button @click="onSave">
           Save
         </Button>
-      </div>
-    </div>
+      </Field>
+    </Group>
   </div>
 </template>
 
 <script>
 import Button from '../presenters/Button';
+import { Field, Group, Label } from '../presenters/HorizontalForm';
 
 export default {
 
   components: {
     Button,
+    Field,
+    Group,
+    Label,
   },
 
   props: {

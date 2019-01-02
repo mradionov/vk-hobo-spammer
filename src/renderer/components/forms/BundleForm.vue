@@ -1,41 +1,87 @@
 <template>
-  <div>
-    <div :class="$style.group">
-      <FriendList
-        :users="friends"
-        @select="onFriendSelect"
-      />
-      <RecepientList
-        :users="recepients"
-        @select="onRecepientSelect"
-      />
-    </div>
+  <form
+    @submit="submit"
+  >
+    <Group>
+      <Label>Title</Label>
+      <Field>
+        <input
+          type="text"
+          v-model.trim="fields.title"
+          maxlength="50"
+          required
+        />
+      </Field>
+    </Group>
+
     <hr />
-    <div :class="$style.group ">
-      <div :class="$style.label" />
-      <div :class="$style.field">
-        <Button @click="onSave">
+
+    <Group>
+      <Label>Users</Label>
+      <Field>
+        <div :class="$style.users">
+          <div :class="$style.list">
+            <UserList
+              :filterByName="filter.name"
+              :selected="fields.userIds"
+              :users="users"
+              @select="toggleSelection"
+            />
+            <NoItemsMessage v-if="!hasAnyUsers">
+              No friends :(
+            </NoItemsMessage>
+          </div>
+          <div :class="$style.filter">
+            <h3>Filter</h3>
+            <UserFilter
+              @change="handleFilterChange"
+              @reset="handleFilterReset"
+            />
+          </div>
+        </div>
+      </Field>
+    </Group>
+
+    <hr />
+
+    <Group>
+      <Label />
+      <Field>
+        <Button type="submit">
           Save
         </Button>
-      </div>
-    </div>
-  </div>
+      </Field>
+    </Group>
+  </form>
 </template>
 
 <script>
 import Button from '../presenters/Button';
-import FriendList from '../presenters/FriendList';
-import RecepientList from '../presenters/RecepientList';
+import NoItemsMessage from '../presenters/NoItemsMessage';
+import UserFilter from '../presenters/UserFilter';
+import UserList from '../presenters/UserList';
+import { Group, Label, Field } from '../presenters/HorizontalForm';
 
 export default {
 
   components: {
     Button,
-    FriendList,
-    RecepientList,
+    Field,
+    Group,
+    Label,
+    NoItemsMessage,
+    UserFilter,
+    UserList,
   },
 
   props: {
+    initialValues: {
+      type: Object,
+      default: () => ({
+        title: '',
+        userIds: [],
+      }),
+    },
     userIds: {
       type: Array,
     },
@@ -45,68 +91,95 @@ export default {
 
   data() {
     return {
-      selectedUserIds: this.userIds || [],
-      friends: [],
-      recepients: [],
+      fields: this.initialValues || {
+        title: '',
+        userIds: [],
+      },
+
+      filter: {},
+      users: [],
     };
   },
 
+  computed: {
+    hasAnyUsers() {
+      return this.users.length > 0;
+    },
+  },
+
   watch: {
-    userIds(userIds) {
-      this.selectedUserIds = userIds;
+    initialValues(initialValues) {
+      this.fields = {
+        title: initialValues.title,
+        userIds: initialValues.userIds.slice(),
+      };
     },
   },
 
   async mounted() {
     try {
-      this.friends = await this.api.getFriends();
-
-      this.friends.forEach((user) => {
-        if (this.selectedUserIds.includes(user.id)) {
-          this.recepients.push(user);
-        }
-      });
+      this.users = await this.api.getFriends();
     } catch (err) {
       console.error(err);
     }
   },
 
   methods: {
-    onSave() {
+    submit() {
+      const userIds = this.fields.userIds.slice();
+      const users = this.users.filter(user => userIds.includes(user.id));
+
       const formData = {
-        users: this.recepients,
+        title: this.fields.title,
+        userIds,
+        users,
       };
+
       this.$emit('submit', formData);
     },
-    onFriendSelect(selectedUser) {
-      if (this.selectedUserIds.includes(selectedUser.id)) {
-        return;
+
+    handleFilterChange(filter) {
+      this.filter = filter;
+    },
+
+    handleFilterReset() {
+      this.filter = {};
+    },
+
+    toggleSelection(selectedUser) {
+      if (this.isSelected(selectedUser)) {
+        this.fields.userIds = this.fields.userIds.filter((id) => {
+          return id !== selectedUser.id;
+        });
+      } else {
+        this.fields.userIds.push(selectedUser.id);
       }
-
-      this.recepients.push(selectedUser);
-      this.selectedUserIds.push(selectedUser.id);
     },
-    onRecepientSelect(selectedUser) {
-      this.recepients = this.recepients.filter(user => user.id !== selectedUser.id);
 
-      this.selectedUserIds = this.selectedUserIds.filter(id =>
-        id !== selectedUser.id,
-      );
+    isSelected(user) {
+      return this.fields.userIds.includes(user.id);
     },
+
   },
 
 };
 </script>
 
 <style module>
-.group {
+.users {
   display: flex;
 }
 
-.label {
-  color: #656565;
-  text-align: right;
-  padding: 6px 12px 7px 0;
-  width: 100px;
+.list {
+  height: 600px;
+  overflow-y: auto;
+  flex: 0.7;
+}
+
+.filter {
+  border-left: 1px solid #e7e8ec;
+  flex: 0.3;
+  margin-left: 20px;
+  padding-left: 20px;
 }
 </style>

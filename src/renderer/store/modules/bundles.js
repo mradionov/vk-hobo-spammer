@@ -33,7 +33,7 @@ const module = {
     update(state, payload) {
       const id = payload.id;
 
-      state.map[id] = payload;
+      Vue.set(state.map, id, payload);
     },
     remove(state, idToRemove) {
       state.ids = state.ids.filter(id => id !== idToRemove);
