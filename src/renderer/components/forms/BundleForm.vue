@@ -1,12 +1,11 @@
 <template>
-  <form
-    @submit="submit"
-  >
+  <form @submit="handleSubmit">
     <Group>
       <Label>Title</Label>
       <Field>
         <input
           type="text"
+          :class="$style.input"
           v-model.trim="fields.title"
           maxlength="50"
           required
@@ -125,7 +124,7 @@ export default {
   },
 
   methods: {
-    submit() {
+    handleSubmit() {
       const userIds = this.fields.userIds.slice();
       const users = this.users.filter(user => userIds.includes(user.id));
 
@@ -166,6 +165,14 @@ export default {
 </script>
 
 <style module>
+.input {
+  border: 1px solid #d3d9de;
+  border-radius: 2px;
+  color: #000;
+  margin: 0;
+  padding: 3px 5px;
+}
+
 .users {
   display: flex;
 }
