@@ -4,14 +4,12 @@
       Create Bundle
     </PageTitle>
     <BundleForm
-      @submit="submit"
+      @submit="handleSubmit"
     />
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-
 import Button from '../presenters/Button';
 import PageTitle from '../presenters/PageTitle';
 
@@ -25,41 +23,30 @@ export default {
     BundleForm,
   },
 
+  inject: ['server'],
+
   computed: {
     messageId() {
-      return Number(this.$route.params.messageId);
+      return this.$route.params.messageId;
     }
   },
 
   methods: {
-    ...mapActions({
-      createPost: 'posts/create',
-      createBundle: 'bundles/create',
-    }),
-
-    async submit(formData) {
-      const messageId = this.messageId;
-
-      const userIds = formData.users.map(user => user.id);
-
-      const bundleData = {
-        messageId,
+    async handleSubmit(formData) {
+      const sendData = {
+        messageId: this.messageId,
         title: formData.title,
-        userIds,
+        userIds: formData.userIds,
       };
 
-      const bundleId = await this.createBundle(bundleData);
-
-      formData.users.forEach((user) => {
-        const postData = {
-          bundleId,
-          user,
-        };
-
-        this.createPost(postData);
-      });
-
-      this.$router.go(-1);
+      try {
+        const bundle = await this.server.send('bundles/create', sendData);
+        console.log(bundle);
+        this.$router.go(-1);
+      } catch (err) {
+        console.error(err);
+        alert(err);
+      }
     },
 
   },

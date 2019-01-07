@@ -1,12 +1,11 @@
 <template>
-  <form
-    @submit="submit"
-  >
+  <form @submit="handleSubmit">
     <Group>
       <Label>Title</Label>
       <Field>
         <input
           type="text"
+          :class="$style.input"
           v-model.trim="fields.title"
           maxlength="50"
           required
@@ -22,12 +21,16 @@
         <div :class="$style.users">
           <div :class="$style.list">
             <UserList
+              v-if="hasAnyUsers"
               :filterByName="filter.name"
               :selected="fields.userIds"
               :users="users"
               @select="toggleSelection"
             />
-            <NoItemsMessage v-if="!hasAnyUsers">
+            <NoItemsMessage v-if="isFetching">
+              Loading ...
+            </NoItemsMessage>
+            <NoItemsMessage v-if="isFetched && !hasAnyUsers">
               No friends :(
             </NoItemsMessage>
           </div>
@@ -87,7 +90,7 @@ export default {
     },
   },
 
-  inject: ['api'],
+  inject: ['server'],
 
   data() {
     return {
@@ -95,6 +98,9 @@ export default {
         title: '',
         userIds: [],
       },
+
+      isFetching: false,
+      isFetched: false,
 
       filter: {},
       users: [],
@@ -117,22 +123,24 @@ export default {
   },
 
   async mounted() {
+    this.isFetching = true;
+
     try {
-      this.users = await this.api.getFriends();
+      this.users = await this.server.send('users/index');
     } catch (err) {
       console.error(err);
+      alert(err);
     }
+
+    this.isFetching = false;
+    this.isFetched = true;
   },
 
   methods: {
-    submit() {
-      const userIds = this.fields.userIds.slice();
-      const users = this.users.filter(user => userIds.includes(user.id));
-
+    handleSubmit() {
       const formData = {
         title: this.fields.title,
-        userIds,
-        users,
+        userIds: this.fields.userIds.slice(),
       };
 
       this.$emit('submit', formData);
@@ -166,6 +174,14 @@ export default {
 </script>
 
 <style module>
+.input {
+  border: 1px solid #d3d9de;
+  border-radius: 2px;
+  color: #000;
+  margin: 0;
+  padding: 3px 5px;
+}
+
 .users {
   display: flex;
 }

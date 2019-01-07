@@ -7,77 +7,22 @@
           slot="actions"
           :to="{
             name: 'bundleCreate',
-            params: { messageId: $route.params.messageId }
+            params: { messageId }
           }"
         >
           Create bundle
         </ButtonLink>
       </div>
     </PageTitle>
-    <Table v-if="hasAnyBundles">
-      <HeaderRow slot="header">
-        <HeaderCell>ID</HeaderCell>
-        <HeaderCell>Title</HeaderCell>
-        <HeaderCell>Waiting</HeaderCell>
-        <HeaderCell>Sent</HeaderCell>
-        <HeaderCell>Failed</HeaderCell>
-        <HeaderCell>Total</HeaderCell>
-        <HeaderCell>Actions</HeaderCell>
-        <HeaderCell>Posts</HeaderCell>
-      </HeaderRow>
-      <Row
-        v-for="bundle in bundles"
-        :key="bundle.id"
-      >
-        <Cell>{{bundle.id}}</Cell>
-        <Cell :class="$style.titleCell">
-          {{bundle.title}}
-        </Cell>
-        <Cell :class="$style.countCell">
-          {{bundle.waitingPostsCount}}
-        </Cell>
-        <Cell :class="$style.sentCountCell">
-          {{bundle.sentPostsCount}}
-        </Cell>
-        <Cell :class="$style.failedCountCell">
-          {{bundle.failedPostsCount}}
-        </Cell>
-        <Cell :class="$style.countCell">
-          {{bundle.totalPostsCount}}
-        </Cell>
-        <Cell :class="$style.actionCell">
-          <ButtonLink
-            :class="$style.editButton"
-            :disabled="!canEdit"
-            :to="{
-              name: 'bundleEdit',
-              params: {
-                messageId: $route.params.messageId,
-                bundleId: bundle.id,
-              },
-            }"
-          >
-            Edit
-          </ButtonLink>
-          <Button
-            :disabled="!canRemove"
-            @click="confirmRemove(bundle)"
-          >
-            Remove
-          </Button>
-        </Cell>
-        <Cell :class="$style.postsCell">
-          <ButtonLink
-            :to="{
-              name: 'postIndex',
-              params: { bundleId: bundle.id }
-            }"
-          >
-            Show posts
-          </ButtonLink>
-        </Cell>
-      </Row>
-    </Table>
+    <BundleList
+      v-if="hasAnyBundles"
+      :bundles="bundles"
+      :canEdit="policy.canEdit"
+      :canRemove="policy.canRemove"
+      @edit="handleEdit"
+      @remove="handleRemove"
+      @showPosts="handleShowPosts"
+    />
     <NoItemsMessage v-if="!hasAnyBundles">
       No bundles yet
     </NoItemsMessage>
@@ -85,77 +30,84 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
-
-import Button from '../presenters/Button';
+import BundleList from '../presenters/BundleList';
 import ButtonLink from '../presenters/ButtonLink';
 import NoItemsMessage from '../presenters/NoItemsMessage';
 import PageTitle from '../presenters/PageTitle';
-import StatusText from '../presenters/StatusText';
-import { Table, HeaderRow, HeaderCell, Row, Cell } from '../presenters/Table';
 
 export default {
 
   components: {
-    Button,
+    BundleList,
     ButtonLink,
     NoItemsMessage,
     PageTitle,
-    StatusText,
-    Table,
-    HeaderRow,
-    HeaderCell,
-    Row,
-    Cell,
+  },
+
+  inject: ['server'],
+
+  data() {
+    return {
+      bundles: [],
+      policy: {
+        canEdit: true,
+        canRemove: true,
+      },
+    };
   },
 
   computed: {
-    ...mapGetters({
-      countAllWaitingPostsByBundle: 'posts/countAllWaitingByBundle',
-      countAllSentPostsByBundle: 'posts/countAllSentByBundle',
-      countAllFailedPostsByBundle: 'posts/countAllFailedByBundle',
-      countAllPostsByBundle: 'posts/countAllByBundle',
-      canEdit: 'canEdit',
-      canRemove: 'canRemove',
-    }),
-
-    ...mapState('bundles', {
-      bundles(state) {
-        return state.ids
-          .map(id => state.map[id])
-          .filter(bundle => bundle.messageId === this.messageId)
-          .map((bundle) => {
-            const waitingPostsCount = this.countAllWaitingPostsByBundle(bundle.id);
-            const sentPostsCount = this.countAllSentPostsByBundle(bundle.id);
-            const failedPostsCount = this.countAllFailedPostsByBundle(bundle.id);
-            const totalPostsCount = this.countAllPostsByBundle(bundle.id);
-
-            return {
-              ...bundle,
-              waitingPostsCount,
-              sentPostsCount,
-              failedPostsCount,
-              totalPostsCount,
-            };
-          });
-      },
-    }),
-
     messageId() {
-      return Number(this.$route.params.messageId);
+      return this.$route.params.messageId;
     },
-
     hasAnyBundles() {
       return this.bundles.length > 0;
     }
   },
 
-  methods: {
-    ...mapActions({
-      'removeBundle': 'bundles/remove',
-    }),
+  mounted() {
+    this.fetchBundles();
+    this.fetchPolicy();
 
-    confirmRemove(bundle) {
+    this.server.listen('postSender/update', this.handlePostSenderUpdate);
+  },
+
+  destroyed() {
+    this.server.unlisten('postSender/update', this.handlePostSenderUpdate);
+  },
+
+  methods: {
+    async fetchBundles() {
+      try {
+        this.bundles = await this.server.send('bundles/index', {
+          messageId: this.messageId,
+        });
+      } catch (err) {
+        console.error(err);
+        alert(err);
+      }
+    },
+
+    async fetchPolicy() {
+      try {
+        this.policy = await this.server.send('bundles/policy');
+      } catch (err) {
+        console.error(err);
+        alert(err);
+      }
+    },
+
+    handleEdit(bundle) {
+      this.$router.push({
+        name: 'bundleEdit',
+        params: {
+          messageId: this.messageId,
+          bundleId: bundle._id,
+        },
+      });
+    },
+
+    async handleRemove(bundle) {
       const isRemoveConfirmed = window.confirm(
         'All posts will be removed. Are you sure?',
       );
@@ -163,46 +115,32 @@ export default {
         return;
       }
 
-      this.removeBundle(bundle.id);
+      try {
+        await this.server.send('bundles/remove', {
+          id: bundle._id,
+        });
+      } catch (err) {
+        console.error(err);
+        alert(err);
+      }
+
+      await this.fetchBundles();
+    },
+
+    handleShowPosts(bundle) {
+      this.$router.push({
+        name: 'postIndex',
+        params: {
+          bundleId: bundle._id,
+        },
+      });
+    },
+
+    handlePostSenderUpdate() {
+      this.fetchBundles();
+      this.fetchPolicy();
     },
   },
 
 };
 </script>
-
-<style module>
-.editButton {
-  margin-right: 5px;
-}
-
-.titleCell {
-  max-width: 70px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.sentCountCell {
-  color: #40964c;
-  font-weight: bold;
-  width: 80px;
-}
-
-.failedCountCell {
-  color: #de0400;
-  font-weight: bold;
-  width: 80px;
-}
-
-.countCell {
-  width: 80px;
-}
-
-.actionCell {
-  width: 200px;
-}
-
-.postsCell {
-  width: 135px;
-}
-</style>

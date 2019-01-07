@@ -5,14 +5,12 @@
     </PageTitle>
     <MessageForm
       :initialValues="message"
-      @submit="submit"
+      @submit="handleSubmit"
     />
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-
 import MessageForm from '../forms/MessageForm';
 import PageTitle from '../presenters/PageTitle';
 
@@ -23,11 +21,9 @@ export default {
     PageTitle,
   },
 
-  computed: {
-    ...mapGetters({
-      getMessageById: 'messages/getById',
-    }),
+  inject: ['server'],
 
+  computed: {
     messageId() {
       return this.$route.params.messageId;
     },
@@ -39,18 +35,23 @@ export default {
     };
   },
 
-  mounted() {
-    this.message = this.getMessageById(this.messageId);
+  async mounted() {
+    this.message = await this.server.send('messages/show', {
+      id: this.messageId,
+    });
   },
 
   methods: {
-    ...mapActions({
-      'updateMessage': 'messages/update',
-    }),
 
-    submit(data) {
-      this.updateMessage(data);
-      this.$router.push('/message/index');
+    async handleSubmit(formData) {
+      try {
+        const message = await this.server.send('messages/update', formData);
+        console.log(message);
+        this.$router.push('/message/index');
+      } catch (err) {
+        console.error(err);
+        alert(err);
+      }
     },
 
   },

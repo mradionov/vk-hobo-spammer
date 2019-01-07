@@ -2,7 +2,7 @@
   <div>
     <TheHeader
       :profile="profile"
-      @logout="logout"
+      @logout="handleLogout"
     />
     <div :class="$style.navigation">
       <NavBackButton
@@ -16,8 +16,6 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
-
 import NavBackButton from './NavBackButton';
 import TheHeader from './TheHeader';
 
@@ -28,63 +26,42 @@ export default {
     NavBackButton,
   },
 
-  inject: ['api'],
+  inject: ['server'],
 
-  data: () => ({
-    profile: null,
-  }),
-
-  computed: {
-    isAuthenticated() {
-      return this.$store.getters.isAuthenticated;
-    },
+  data() {
+    return {
+      profile: null,
+    };
   },
 
-  watch: {
-    async isAuthenticated(newIsAuthenticated, oldIsAuthenticated) {
-      if (newIsAuthenticated) {
-        await this.fetchProfile();
-        this.$router.push({ name: 'messageIndex' });
-        return;
-      }
-
-      this.resetProfile();
-      this.$router.push({ name: 'auth' });
-    }
-  },
-
-  mounted() {
-    if (this.isAuthenticated) {
+  async mounted() {
+    try {
+      this.profile = await this.server.send('profile');
       this.$router.push({ name: 'messageIndex' });
-    } else {
+    } catch (err) {
+      console.error(err);
+      alert(err);
+
       this.$router.push({ name: 'auth' });
     }
+
+    this.server.onSuccess('auth/login', async () => {
+      try {
+        this.profile = await this.server.send('profile');
+      } catch (err) {
+        console.error(err);
+        alert(err);
+
+        this.$router.push({ name: 'auth' });
+      }
+    });
   },
 
   methods: {
-    ...mapMutations('session', [
-      'clearAccessToken',
-    ]),
-
-    async fetchProfile() {
-      try {
-        this.profile = await this.api.getProfile();
-      } catch (err) {
-        if (err.error_code === 5) {
-          window.alert(err.error_msg);
-          this.logout();
-          return;
-        }
-        console.error(err);
-      }
-    },
-
-    resetProfile() {
+    async handleLogout() {
+      await this.server.send('auth/logout');
       this.profile = null;
-    },
-
-    logout() {
-      this.clearAccessToken();
+      this.$router.push({ name: 'auth' });
     },
   },
 

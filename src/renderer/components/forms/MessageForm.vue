@@ -1,12 +1,14 @@
 <template>
-  <div>
+  <form @submit="handleSubmit">
     <Group>
       <Label>Title</Label>
       <Field>
         <input
-          :class="$style.input"
           type="text"
+          :class="$style.input"
           v-model.trim="fields.title"
+          maxlength="50"
+          required
         />
       </Field>
     </Group>
@@ -19,6 +21,8 @@
           v-model.trim="fields.text"
           cols="100"
           rows="30"
+          maxlength="4096"
+          required
         >
         </textarea>
         <br />
@@ -39,12 +43,12 @@
     <Group>
       <Label />
       <Field>
-        <Button @click="onSave">
+        <Button type="submit">
           Save
         </Button>
       </Field>
     </Group>
-  </div>
+  </form>
 </template>
 
 <script>
@@ -99,7 +103,7 @@ export default {
 
   methods: {
 
-    onSave() {
+    handleSubmit() {
       this.$emit('submit', this.fields);
     },
 

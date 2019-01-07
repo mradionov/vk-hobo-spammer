@@ -65,23 +65,10 @@ const routes = [
   },
 ];
 
-function createRouter(store) {
+function createRouter() {
   Vue.use(VueRouter);
 
   const router = new VueRouter({ routes });
-
-  const anonymousPaths = [
-    '/',
-    '/auth',
-  ];
-
-  router.beforeEach((from, to, next) => {
-    if (!store.getters.isAuthenticated && !anonymousPaths.includes(from.path)) {
-      next('/auth');
-      return;
-    }
-    next();
-  });
 
   return router;
 }

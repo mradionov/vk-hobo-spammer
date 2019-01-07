@@ -3,51 +3,19 @@
     <PageTitle>
       Posts
       <div slot="actions">
-        <Button @click="retryAll">
+        <Button @click="handleRetryAll">
           Retry all failed
         </Button>
-        <Button @click="sendAll">
+        <Button @click="handleSendAll">
           Send all idle
         </Button>
       </div>
     </PageTitle>
-    <Table v-if="hasAnyPosts">
-      <HeaderRow slot="header">
-        <HeaderCell>ID</HeaderCell>
-        <HeaderCell>User</HeaderCell>
-        <HeaderCell>Status</HeaderCell>
-        <HeaderCell>Last error</HeaderCell>
-        <HeaderCell>Attempts</HeaderCell>
-        <HeaderCell>Actions</HeaderCell>
-      </HeaderRow>
-      <Row
-        v-for="post in posts"
-        :key="post.id"
-      >
-        <Cell>{{post.id}}</Cell>
-        <Cell>{{post.user.first_name}} {{post.user.last_name}}</Cell>
-        <Cell>
-          <StatusText :status="post.status" />
-        </Cell>
-        <Cell>
-          <ErrorText :code="post.lastErrorCode" />
-        </Cell>
-        <Cell>{{post.attempts}}</Cell>
-        <Cell>
-          <Button
-            @click="send(post)"
-            :disabled="!canSend(post)"
-          >
-            <span v-if="isFailed(post)">
-              Retry
-            </span>
-            <span v-else>
-              Send
-            </span>
-          </Button>
-        </Cell>
-      </Row>
-    </Table>
+    <PostList
+      v-if="hasAnyPosts"
+      :posts="posts"
+      @send="handleSend"
+    />
     <NoItemsMessage v-if="!hasAnyPosts">
       No posts yet
     </NoItemsMessage>
@@ -55,76 +23,75 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex';
-
 import Button from '../presenters/Button';
-import ErrorText from '../presenters/ErrorText';
 import NoItemsMessage from '../presenters/NoItemsMessage';
 import PageTitle from '../presenters/PageTitle';
-import StatusText from '../presenters/StatusText';
-import { Table, HeaderRow, HeaderCell, Row, Cell } from '../presenters/Table';
-
-import { POST_STATUSES } from '../../constants/post';
+import PostList from '../presenters/PostList';
 
 export default {
 
   components: {
     Button,
-    ErrorText,
     NoItemsMessage,
     PageTitle,
-    StatusText,
-    Table,
-    HeaderRow,
-    HeaderCell,
-    Row,
-    Cell,
+    PostList,
+  },
+
+  inject: ['server'],
+
+  data() {
+    return {
+      posts: [],
+    };
   },
 
   computed: {
-    ...mapState('posts', {
-      posts(state) {
-        return state.ids
-          .map(id => state.map[id])
-          .filter(post => post.bundleId === this.bundleId);
-      },
-    }),
-
     bundleId() {
-      return Number(this.$route.params.bundleId);
+      return this.$route.params.bundleId;
     },
-
     hasAnyPosts() {
       return this.posts.length > 0;
     }
   },
 
+  mounted() {
+    this.fetch();
+
+    this.server.listen('postSender/update', this.handlePostSenderUpdate);
+  },
+
+  destroyed() {
+    this.server.unlisten('postSender/update', this.handlePostSenderUpdate);
+  },
+
   methods: {
-    ...mapActions('posts', [
-      'attemptSend',
-      'attemptSendAllByBundle',
-      'attemptRetryAllByBundle',
-    ]),
-
-    send(post) {
-      this.attemptSend(post.id);
+    async fetch() {
+      try {
+        this.posts = await this.server.send('posts/index', {
+          bundleId: this.bundleId,
+        });
+      } catch (err) {
+        console.error(err);
+        alert(err);
+      }
     },
-
-    sendAll() {
-      this.attemptSendAllByBundle(this.bundleId);
+    handleSend(post) {
+      this.server.send('posts/send', {
+        id: post._id,
+      });
     },
-
-    retryAll() {
-      this.attemptRetryAllByBundle(this.bundleId);
+    handleSendAll() {
+      this.server.send('posts/sendAllByBundle', {
+        bundleId: this.bundleId,
+      });
     },
-
-    canSend(post) {
-      return post.status === POST_STATUSES.idle
-        || post.status === POST_STATUSES.failed;
+    handleRetryAll() {
+      this.server.send('posts/retryAllByBundle', {
+        bundleId: this.bundleId,
+      });
     },
-
-    isFailed(post) {
-      return post.status === POST_STATUSES.failed;
+    handlePostSenderUpdate() {
+      this.fetch();
     },
   },
 
