@@ -7,6 +7,8 @@ const NAMESPACES = {
 const VK_ERROR_CODES = {
   10: 'Internal server error. Try again later. ' +
     'Probably message with this id is already sent to the user.',
+  14: 'Captcha needed',
+  100: 'One of the parameters specified was missing or invalid',
   914: 'Message is too long',
 };
 

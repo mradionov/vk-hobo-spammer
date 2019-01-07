@@ -1,40 +1,23 @@
 import Vue from 'vue';
 
-import HTTPClient from './services/HTTPClient';
-import IPCClient from './services/IPCClient';
-import VKApi from './services/VKApi';
+import IPCRouterClient from './services/IPCRouterClient';
 
 import dateHelper from './helpers/dateHelper';
 
-import createStore from './store/store';
 import createRouter from './router/router';
 
 import App from './components/app/App';
 
-const http = new HTTPClient({
-  baseURL: 'https://api.vk.com/method',
-  params: {
-    v: '5.73',
-  },
-});
-const api = new VKApi(http);
-const ipc = new IPCClient();
+const server = new IPCRouterClient();
 
-const store = createStore({ api, ipc, http });
-const router = createRouter(store);
+const router = createRouter();
 
 const app = new Vue({
 
-  store,
   router,
 
   provide: {
-    api,
-    ipc,
-  },
-
-  mounted() {
-    ipc.send('app:renderer/ready');
+    server,
   },
 
   render: h => h(App),

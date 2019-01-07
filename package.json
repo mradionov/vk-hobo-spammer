@@ -23,9 +23,9 @@
   "dependencies": {
     "lodash": "^4.17.5",
     "mkdirp": "^0.5.1",
+    "nedb": "^1.8.0",
     "vue": "^2.5.16",
-    "vue-router": "^3.0.1",
-    "vuex": "^3.0.1"
+    "vue-router": "^3.0.1"
   },
   "devDependencies": {
     "css-loader": "^1.0.1",

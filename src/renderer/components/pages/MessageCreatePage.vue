@@ -4,14 +4,12 @@
       Create Message
     </PageTitle>
     <MessageForm
-      @submit="submit"
+      @submit="handleSubmit"
     />
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-
 import Button from '../presenters/Button';
 import MessageForm from '../forms/MessageForm';
 import PageTitle from '../presenters/PageTitle';
@@ -24,14 +22,18 @@ export default {
     PageTitle,
   },
 
-  methods: {
-    ...mapActions({
-      'createMessage': 'messages/create',
-    }),
+  inject: ['server'],
 
-    submit(data) {
-      this.createMessage(data);
-      this.$router.push('/message/index');
+  methods: {
+
+    async handleSubmit(formData) {
+      try {
+        const message = await this.server.send('messages/create', formData);
+        this.$router.push('/message/index');
+      } catch (err) {
+        console.error(err);
+        alert(err);
+      }
     },
 
   },
