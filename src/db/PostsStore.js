@@ -32,6 +32,10 @@ class PostsStore extends StoreBase {
     });
   }
 
+  findAllByMessage(messageId) {
+    return this.find({ messageId });
+  }
+
   findAllByBundle(bundleId) {
     return this.find({ bundleId });
   }

@@ -4,6 +4,7 @@
       Create Bundle
     </PageTitle>
     <BundleForm
+      :users="users"
       @submit="handleSubmit"
     />
   </div>
@@ -25,9 +26,26 @@ export default {
 
   inject: ['server'],
 
+  data() {
+    return {
+      users: [],
+    };
+  },
+
   computed: {
     messageId() {
       return this.$route.params.messageId;
+    }
+  },
+
+  async mounted() {
+    try {
+      this.users = await this.server.send('users/index', {
+        messageId: this.messageId,
+      });
+    } catch (err) {
+      console.error(err);
+      alert(err);
     }
   },
 
@@ -37,6 +55,7 @@ export default {
         messageId: this.messageId,
         title: formData.title,
         userIds: formData.userIds,
+        users: formData.users,
       };
 
       try {
