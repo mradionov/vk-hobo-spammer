@@ -1,7 +1,9 @@
 <template>
   <Table>
     <HeaderRow slot="header">
-      <HeaderCell>User</HeaderCell>
+      <HeaderCell>User Photo</HeaderCell>
+      <HeaderCell>User ID</HeaderCell>
+      <HeaderCell>User Name</HeaderCell>
       <HeaderCell>Status</HeaderCell>
       <HeaderCell>Last error</HeaderCell>
       <HeaderCell>Attempts</HeaderCell>
@@ -11,7 +13,16 @@
       v-for="post in posts"
       :key="post._id"
     >
+      <Cell :class="$style.photoCell">
+        <img
+          :class="$style.photo"
+          :src="post.user.photo_50"
+        />
+      </Cell>
       <Cell>{{post.user.id}}</Cell>
+      <Cell :class="$style.nameCell">
+        {{post.user.first_name}} {{post.user.last_name}}
+      </Cell>
       <Cell>
         <StatusText :status="post.status" />
       </Cell>
@@ -79,5 +90,11 @@ export default {
 </script>
 
 <style module>
+.photoCell {
+  width: 100px;
+}
 
+.photo {
+  width: 30px;
+}
 </style>

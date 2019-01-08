@@ -205,17 +205,22 @@ router.route('bundles/show', async (req, res) => {
 
 router.route('bundles/create', async (req, res) => {
   try {
-    const newBundle = await bundlesStore.create(req.data);
+    const bundleData = {
+      messageId: req.data.messageId,
+      title: req.data.title,
+      userIds: req.data.userIds,
+    };
 
-    const newPostsData = newBundle.userIds.map((userId) => {
+    const newBundle = await bundlesStore.create(bundleData);
+
+    const newPostsData = req.data.users.map((user) => {
       const postData = {
         bundleId: newBundle._id,
+        messageId: req.data.messageId,
         status: 'idle',
         lastErrorCode: null,
         attempts: 0,
-        user: {
-          id: userId,
-        },
+        user,
       };
 
       return postData;
@@ -243,9 +248,10 @@ router.route('bundles/update', async (req, res) => {
 
     const oldUserIds = oldBundle.userIds;
     const newUserIds = req.data.userIds;
+    const newUsers = req.data.users;
 
-    const addedUserIds = newUserIds.filter((userId) => {
-      return !oldUserIds.includes(userId);
+    const addedUsers = newUsers.filter((user) => {
+      return !oldUserIds.includes(user.id);
     });
 
     const removedPostsIds = oldPosts
@@ -254,21 +260,26 @@ router.route('bundles/update', async (req, res) => {
       })
       .map(post => post._id);
 
-    const newPostsData = addedUserIds.map((userId) => {
+    const newPostsData = addedUsers.map((user) => {
       const postData = {
         bundleId,
+        messageId: req.data.messageId,
         status: 'idle',
         lastErrorCode: null,
         attempts: 0,
-        user: {
-          id: userId,
-        },
+        user,
       };
 
       return postData;
     });
 
-    await bundlesStore.updateById(req.data._id, req.data);
+    const bundleData = {
+      messageId: req.data.messageId,
+      title: req.data.title,
+      userIds: req.data.userIds,
+    };
+
+    await bundlesStore.updateById(req.data._id, bundleData);
     await postsStore.create(newPostsData);
     await postsStore.removeAllByIds(removedPostsIds);
 
@@ -346,11 +357,26 @@ router.route('posts/retryAllByBundle', async (req, res) => {
 });
 
 router.route('users/index', async (req, res) => {
+  const messageId = req.data.messageId;
+
   try {
     const users = await vkApi.getFriends();
-    res.send(users);
+
+    const posts = await postsStore.findAllByMessage(messageId);
+    const postMap = posts.reduce((map, post) => {
+      map[post.user.id] = post;
+      return map;
+    }, {});
+
+    const usersWithPosts = users.map((user) => {
+      return {
+        ...user,
+        post: postMap[user.id] || null,
+      };
+    });
+
+    res.send(usersWithPosts);
   } catch (err) {
     res.fail(err);
-    console.error(err);
   }
 });

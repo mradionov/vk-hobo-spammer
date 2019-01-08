@@ -22,6 +22,7 @@
           <div :class="$style.list">
             <UserList
               v-if="hasAnyUsers"
+              :bundleId="bundleId"
               :filterByName="filter.name"
               :selected="fields.userIds"
               :users="users"
@@ -78,6 +79,10 @@ export default {
   },
 
   props: {
+    bundleId: {
+      type: String,
+      default: null,
+    },
     initialValues: {
       type: Object,
       default: () => ({
@@ -85,8 +90,9 @@ export default {
         userIds: [],
       }),
     },
-    userIds: {
+    users: {
       type: Array,
+      default: () => [],
     },
   },
 
@@ -103,7 +109,6 @@ export default {
       isFetched: false,
 
       filter: {},
-      users: [],
     };
   },
 
@@ -122,25 +127,17 @@ export default {
     },
   },
 
-  async mounted() {
-    this.isFetching = true;
-
-    try {
-      this.users = await this.server.send('users/index');
-    } catch (err) {
-      console.error(err);
-      alert(err);
-    }
-
-    this.isFetching = false;
-    this.isFetched = true;
-  },
-
   methods: {
     handleSubmit() {
+      const userIds = this.fields.userIds.slice();
+      const users = this.users.filter((user) => {
+        return userIds.includes(user.id);
+      });
+
       const formData = {
         title: this.fields.title,
-        userIds: this.fields.userIds.slice(),
+        userIds,
+        users,
       };
 
       this.$emit('submit', formData);

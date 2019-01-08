@@ -4,7 +4,9 @@
       Edit Bundle
     </PageTitle>
     <BundleForm
+      :bundleId="bundleId"
       :initialValues="bundle"
+      :users="users"
       @submit="handleSubmit"
     />
   </div>
@@ -27,6 +29,7 @@ export default {
   data() {
     return {
       bundle: null,
+      users: [],
     };
   },
 
@@ -44,6 +47,9 @@ export default {
       this.bundle = await this.server.send('bundles/show', {
         id: this.bundleId,
       });
+      this.users = await this.server.send('users/index', {
+        messageId: this.messageId,
+      });
     } catch (err) {
       console.error(err);
       alert(err);
@@ -57,6 +63,7 @@ export default {
         messageId: this.messageId,
         title: formData.title,
         userIds: formData.userIds,
+        users: formData.users,
       };
 
       try {

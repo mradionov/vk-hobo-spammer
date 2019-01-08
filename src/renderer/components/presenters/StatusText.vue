@@ -18,7 +18,6 @@ export default {
   props: {
 
     status: {
-      required: true,
       type: String,
       validator: function (value) {
         return Object.values(POST_STATUSES).includes(value);
