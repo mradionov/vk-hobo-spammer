@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
 
 const MessagesStore = require('./db/MessagesStore');
 const BundlesStore = require('./db/BundlesStore');
@@ -55,6 +55,36 @@ app.on('ready', async () => {
   }
 
   router.setWindow(window);
+
+  const menuTemplate = [
+    {
+      label: 'File',
+      submenu: [
+        {
+          type: 'separator',
+        },
+        {
+          label: 'Open Developer Tools',
+          click() {
+            window.webContents.openDevTools();
+          },
+        },
+        {
+          type: 'separator',
+        },
+        {
+          label: 'Quit',
+          click() {
+            app.quit();
+          },
+        },
+      ],
+    },
+  ];
+
+  const menu = Menu.buildFromTemplate(menuTemplate);
+
+  Menu.setApplicationMenu(menu);
 });
 
 postSender.on('update', () => {
