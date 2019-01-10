@@ -1,0 +1,8 @@
+{
+  "file": "File",
+  "file.language": "Language",
+  "file.language.ru": "Русский",
+  "file.language.en": "English",
+  "devtools": "Toggle Developer Tools",
+  "quit": "Quit"
+}

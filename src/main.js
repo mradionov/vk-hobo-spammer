@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow } = require('electron');
 
 const MessagesStore = require('./db/MessagesStore');
 const BundlesStore = require('./db/BundlesStore');
@@ -8,6 +8,8 @@ const IPCRouterServer = require('./services/IPCRouterServer');
 const PostSender = require('./services/PostSender');
 const VKApi = require('./services/VKApi');
 const VKAuthService = require('./services/VKAuthService');
+
+const ApplicationMenu = require('./menu/ApplicationMenu');
 
 const Cache = require('./lib/Cache');
 
@@ -56,35 +58,13 @@ app.on('ready', async () => {
 
   router.setWindow(window);
 
-  const menuTemplate = [
-    {
-      label: 'File',
-      submenu: [
-        {
-          type: 'separator',
-        },
-        {
-          label: 'Open Developer Tools',
-          click() {
-            window.webContents.openDevTools();
-          },
-        },
-        {
-          type: 'separator',
-        },
-        {
-          label: 'Quit',
-          click() {
-            app.quit();
-          },
-        },
-      ],
-    },
-  ];
+  const locale = cache.get('locale');
+  const menu = new ApplicationMenu(locale);
 
-  const menu = Menu.buildFromTemplate(menuTemplate);
-
-  Menu.setApplicationMenu(menu);
+  menu.on('change', async (locale) => {
+    cache.set('locale', locale);
+    await cache.save();
+  });
 });
 
 postSender.on('update', () => {
