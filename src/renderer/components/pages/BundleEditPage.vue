@@ -1,7 +1,7 @@
 <template>
   <div>
     <PageTitle>
-      Edit Bundle
+      {{$t('pageTitle')}}
     </PageTitle>
     <BundleForm
       :bundleId="bundleId"
@@ -74,6 +74,17 @@ export default {
         console.error(err);
         alert(err);
       }
+    },
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        pageTitle: 'Edit bundle',
+      },
+      ru: {
+        pageTitle: 'Редактирование рассылки',
+      },
     },
   },
 

@@ -1,12 +1,12 @@
 <template>
   <div>
     <PageTitle>
-      Messages
+      {{$t('pageTitle')}}
       <ButtonLink
         slot="actions"
         :to="{ name: 'messageCreate' }"
       >
-        Create message
+        {{$t('create')}}
       </ButtonLink>
     </PageTitle>
     <MessageList
@@ -19,7 +19,7 @@
       @showBundles="handleShowBundles"
     />
     <NoItemsMessage v-if="!hasAnyMessages">
-      No messages yet
+      {{$t('noItems')}}
     </NoItemsMessage>
   </div>
 </template>
@@ -97,10 +97,7 @@ export default {
     },
 
     async handleRemove(message) {
-      const isRemoveConfirmed = window.confirm(
-        'All bundles and posts for this message will be removed.' +
-        ' Are you sure?',
-      );
+      const isRemoveConfirmed = window.confirm(this.$t('removeConfirmation'));
       if (!isRemoveConfirmed) {
         return;
       }
@@ -131,6 +128,23 @@ export default {
       this.fetchPolicy();
     },
 
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        pageTitle: 'Messages',
+        create: 'Create message',
+        noItems: 'No messages',
+        removeConfirmation: 'All bundles and posts for this message will be removed. Are you sure?',
+      },
+      ru: {
+        pageTitle: 'Сообщения',
+        create: 'Создать сообщение',
+        noItems: 'Нет сообщений',
+        removeConfirmation: 'Все рассылки и посты для данного сообщения будут удалены. Вы уверены?',
+      },
+    }
   },
 
 };

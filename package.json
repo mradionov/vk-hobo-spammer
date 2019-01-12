@@ -9,6 +9,10 @@
     "type": "git",
     "url": "https://github.com/mradionov/vk-hobo-spammer"
   },
+  "homepage": "https://github.com/mradionov/vk-hobo-spammer#readme",
+  "bugs": {
+    "url": "https://github.com/mradionov/vk-hobo-spammer/issues"
+  },
   "main": "src/main.js",
   "scripts": {
     "build:renderer": "webpack --config webpack/renderer.config.js",
@@ -25,6 +29,7 @@
     "mkdirp": "^0.5.1",
     "nedb": "^1.8.0",
     "vue": "^2.5.16",
+    "vue-i18n": "^8.7.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

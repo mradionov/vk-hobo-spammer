@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow } = require('electron');
 
 const MessagesStore = require('./db/MessagesStore');
 const BundlesStore = require('./db/BundlesStore');
@@ -9,6 +9,8 @@ const PostSender = require('./services/PostSender');
 const VKApi = require('./services/VKApi');
 const VKAuthService = require('./services/VKAuthService');
 
+const ApplicationMenu = require('./menu/ApplicationMenu');
+
 const Cache = require('./lib/Cache');
 
 const { isDev } = require('./config/env');
@@ -18,6 +20,7 @@ const {
 } = require('./config/paths');
 
 const { VK_APP_ID } = require('./config/secrets');
+const { LOCALES } = require('./constants/locale');
 
 const cache = new Cache({ path: CACHE_PATH });
 const vkAuthService = new VKAuthService({ appId: VK_APP_ID });
@@ -56,35 +59,22 @@ app.on('ready', async () => {
 
   router.setWindow(window);
 
-  const menuTemplate = [
-    {
-      label: 'File',
-      submenu: [
-        {
-          type: 'separator',
-        },
-        {
-          label: 'Open Developer Tools',
-          click() {
-            window.webContents.openDevTools();
-          },
-        },
-        {
-          type: 'separator',
-        },
-        {
-          label: 'Quit',
-          click() {
-            app.quit();
-          },
-        },
-      ],
-    },
-  ];
 
-  const menu = Menu.buildFromTemplate(menuTemplate);
+  let initialLocale = cache.get('locale');
+  if (initialLocale === undefined) {
+    const appLocale = app.getLocale();
+    if (appLocale === 'ru-RU') {
+      initialLocale = LOCALES.RU;
+    }
+  }
 
-  Menu.setApplicationMenu(menu);
+  const menu = new ApplicationMenu(initialLocale);
+
+  menu.on('change', async (locale) => {
+    router.notify('locale/update');
+    cache.set('locale', locale);
+    await cache.save();
+  });
 });
 
 postSender.on('update', () => {
@@ -107,6 +97,11 @@ router.route('auth/logout', async (req, res) => {
   cache.remove('accessToken');
   await cache.save();
   res.send();
+});
+
+router.route('locale', async (req, res) => {
+  const locale = cache.get('locale');
+  res.send(locale);
 });
 
 router.route('profile', async (req, res) => {

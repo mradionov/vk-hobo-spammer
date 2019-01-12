@@ -1,10 +1,27 @@
 <template>
   <div :class="$style.message">
     <slot>
-      No items
+      {{$t('noItems')}}
     </slot>
   </div>
 </template>
+
+<script>
+export default {
+
+  i18n: {
+    messages: {
+      en: {
+        noItems: 'No items',
+      },
+      ru: {
+        noItems: 'Нет данных',
+      },
+    },
+  },
+
+};
+</script>
 
 <style module>
 .message {

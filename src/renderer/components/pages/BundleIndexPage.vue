@@ -1,7 +1,7 @@
 <template>
   <div>
     <PageTitle>
-      Bundles
+      {{$t('pageTitle')}}
       <div slot="actions">
         <ButtonLink
           slot="actions"
@@ -10,7 +10,7 @@
             params: { messageId }
           }"
         >
-          Create bundle
+          {{$t('create')}}
         </ButtonLink>
       </div>
     </PageTitle>
@@ -24,7 +24,7 @@
       @showPosts="handleShowPosts"
     />
     <NoItemsMessage v-if="!hasAnyBundles">
-      No bundles yet
+      {{$t('noItems')}}
     </NoItemsMessage>
   </div>
 </template>
@@ -108,9 +108,7 @@ export default {
     },
 
     async handleRemove(bundle) {
-      const isRemoveConfirmed = window.confirm(
-        'All posts will be removed. Are you sure?',
-      );
+      const isRemoveConfirmed = window.confirm(this.$t('removeConfirmation'));
       if (!isRemoveConfirmed) {
         return;
       }
@@ -139,6 +137,23 @@ export default {
     handlePostSenderUpdate() {
       this.fetchBundles();
       this.fetchPolicy();
+    },
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        pageTitle: 'Bundles',
+        create: 'Create bundle',
+        noItems: 'No bundles',
+        removeConfirmation: 'All posts for this bundles will be removed. Are you sure?',
+      },
+      ru: {
+        pageTitle: 'Рассылки',
+        create: 'Создать рассылку',
+        noItems: 'Нет рассылок',
+        removeConfirmation: 'Все посты для данной рассылки будут удалены. Вы уверены?',
+      },
     },
   },
 

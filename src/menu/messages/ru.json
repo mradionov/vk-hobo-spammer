@@ -1,0 +1,12 @@
+{
+  "file": "Файл",
+  "file.quit": "Выйти",
+  "preferences": "Настройки",
+  "preferences.language": "Язык",
+  "preferences.language.ru": "Русский",
+  "preferences.language.en": "English",
+  "preferences.devtools": "Включить Инструменты Разработчика",
+  "help": "Помощь",
+  "help.support": "Сообщить об ошибке",
+  "help.about": "О программе"
+}

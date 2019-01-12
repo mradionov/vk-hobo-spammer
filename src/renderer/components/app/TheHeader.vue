@@ -15,7 +15,7 @@
         :class="$style.logoutButton"
         @click="onLogoutClick"
       >
-        Log out
+        {{$t('logout')}}
       </button>
     </div>
   </div>
@@ -46,6 +46,17 @@ export default {
   methods: {
     onLogoutClick() {
       this.$emit('logout');
+    },
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        logout: 'Log out',
+      },
+      ru: {
+        logout: 'Выйти',
+      },
     },
   },
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <Group>
-      <Label>Name</Label>
+      <Label>{{$t('name')}}</Label>
       <Field>
         <input
           type="text"
@@ -15,7 +15,7 @@
 
     <Group>
       <Button @click="handleReset">
-        Reset
+        {{$t('reset')}}
       </Button>
     </Group>
   </div>
@@ -56,6 +56,19 @@ export default {
       this.$emit('change', fields);
     },
 
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        name: 'Name',
+        reset: 'Reset',
+      },
+      ru: {
+        name: 'Имя',
+        reset: 'Сбросить',
+      },
+    },
   },
 
 };

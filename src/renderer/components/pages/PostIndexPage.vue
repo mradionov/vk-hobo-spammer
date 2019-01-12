@@ -1,13 +1,13 @@
 <template>
   <div>
     <PageTitle>
-      Posts
+      {{$t('pageTitle')}}
       <div slot="actions">
         <Button @click="handleRetryAll">
-          Retry all failed
+          {{$t('retryAll')}}
         </Button>
         <Button @click="handleSendAll">
-          Send all idle
+          {{$t('sendAll')}}
         </Button>
       </div>
     </PageTitle>
@@ -17,7 +17,7 @@
       @send="handleSend"
     />
     <NoItemsMessage v-if="!hasAnyPosts">
-      No posts yet
+      {{$t('noItems')}}
     </NoItemsMessage>
   </div>
 </template>
@@ -92,6 +92,23 @@ export default {
     },
     handlePostSenderUpdate() {
       this.fetch();
+    },
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        pageTitle: 'Posts',
+        retryAll: 'Retry all failed',
+        sendAll: 'Send all idle',
+        noItems: 'No posts',
+      },
+      ru: {
+        pageTitle: 'Посты',
+        retryAll: 'Повторить все с ошибкой',
+        sendAll: 'Отправить все в ожидании',
+        noItems: 'Нет постов',
+      },
     },
   },
 

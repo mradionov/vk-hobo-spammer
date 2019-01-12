@@ -1,7 +1,7 @@
 <template>
   <div>
     <PageTitle>
-      Create Bundle
+      {{$t('pageTitle')}}
     </PageTitle>
     <BundleForm
       :users="users"
@@ -68,6 +68,17 @@ export default {
       }
     },
 
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        pageTitle: 'New bundle',
+      },
+      ru: {
+        pageTitle: 'Новая рассылка',
+      },
+    },
   },
 
 };

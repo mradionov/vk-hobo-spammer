@@ -1,11 +1,10 @@
 <template>
   <Table>
     <HeaderRow slot="header">
-      <HeaderCell>Title</HeaderCell>
-      <HeaderCell>Text</HeaderCell>
-      <HeaderCell>Random ID</HeaderCell>
-      <HeaderCell>Actions</HeaderCell>
-      <HeaderCell>Bundles</HeaderCell>
+      <HeaderCell>{{$t('title')}}</HeaderCell>
+      <HeaderCell>{{$t('text')}}</HeaderCell>
+      <HeaderCell>{{$t('actions')}}</HeaderCell>
+      <HeaderCell>{{$t('bundles')}}</HeaderCell>
     </HeaderRow>
     <Row
       v-for="message in messages"
@@ -17,26 +16,25 @@
       <Cell :class="$style.textCell">
         {{message.text}}
       </Cell>
-      <Cell>{{message.randomId}}</Cell>
       <Cell :class="$style.actionCell">
         <Button
           :disabled="!canEdit"
           @click="$emit('edit', message)"
         >
-          Edit
+          {{$t('edit')}}
         </Button>
         <Button
           :disabled="!canRemove"
           @click="$emit('remove', message)"
         >
-          Remove
+          {{$t('remove')}}
         </Button>
       </Cell>
       <Cell :class="$style.bundlesCell">
         <Button
           @click="$emit('showBundles', message)"
         >
-          Show bundles
+          {{$t('showBundles')}}
         </Button>
       </Cell>
     </Row>
@@ -73,6 +71,29 @@ export default {
     },
   },
 
+  i18n: {
+    messages: {
+      en: {
+        title: 'Title',
+        text: 'Text',
+        actions: 'Actions',
+        bundles: 'Bundles',
+        edit: 'Edit',
+        remove: 'Remove',
+        showBundles: 'Show bundles',
+      },
+      ru: {
+        title: 'Название',
+        text: 'Текст',
+        actions: 'Действия',
+        bundles: 'Рассылки',
+        edit: 'Изменить',
+        remove: 'Удалить',
+        showBundles: 'Показать рассылки',
+      },
+    }
+  },
+
 };
 </script>
 
@@ -92,10 +113,10 @@ export default {
 }
 
 .actionCell {
-  width: 200px;
+  width: 250px;
 }
 
 .bundlesCell {
-  width: 150px;
+  width: 200px;
 }
 </style>

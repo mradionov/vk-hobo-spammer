@@ -1,7 +1,7 @@
 <template>
   <form @submit="handleSubmit">
     <Group>
-      <Label>Title</Label>
+      <Label>{{$t('title')}}</Label>
       <Field>
         <input
           type="text"
@@ -14,7 +14,7 @@
     </Group>
 
     <Group>
-      <Label>Text</Label>
+      <Label>{{$t('text')}}</Label>
       <Field>
         <textarea
           :class="$style.input"
@@ -32,7 +32,7 @@
             [$style.maxText]: isTextCountExceeded
           }
         ">
-          Character count:
+          {{$t('characterCount')}}:
           <b>{{characterCount}}/{{maxCount}}</b>
         </span>
       </Field>
@@ -107,6 +107,23 @@ export default {
       this.$emit('submit', this.fields);
     },
 
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        title: 'Title',
+        text: 'Text',
+        characterCount: 'Character count',
+        save: 'Save',
+      },
+      ru: {
+        title: 'Название',
+        text: 'Текст',
+        characterCount: 'Количество символов',
+        save: 'Сохранить',
+      },
+    },
   },
 
 };

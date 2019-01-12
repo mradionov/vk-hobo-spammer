@@ -6,7 +6,7 @@
       [$style.failed]: status === POST_STATUSES.failed,
     }"
   >
-    {{status}}
+    {{$t(status)}}
   </span>
 </template>
 
@@ -29,6 +29,25 @@ export default {
   computed: {
     POST_STATUSES() {
       return POST_STATUSES;
+    },
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        idle: 'idle',
+        queued: 'queued',
+        progress: 'progress',
+        sent: 'sent',
+        failed: 'failed',
+      },
+      ru: {
+        idle: 'в ожидании',
+        queued: 'в очереди',
+        progress: 'в процессе',
+        sent: 'отправлено',
+        failed: 'ошибка',
+      },
     },
   },
 
