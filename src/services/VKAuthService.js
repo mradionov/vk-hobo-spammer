@@ -21,7 +21,7 @@ class VKAuthService {
       display: 'page',
       redirect_uri: REDIRECT_URI,
       response_type: 'token',
-      scope: 'friends,messages',
+      scope: 'friends,messages,photos',
       v: '5.73',
     };
     const queryString = queryStringHelper.stringify(queryParams);

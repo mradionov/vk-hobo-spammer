@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { POST_STATUSES } from '../../constants/post';
+import { POST_STATUSES } from '~/constants/post';
 
 export default {
 

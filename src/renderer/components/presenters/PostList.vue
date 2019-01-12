@@ -11,6 +11,7 @@
     </HeaderRow>
     <Row
       v-for="post in posts"
+      :class="$style.row"
       :key="post._id"
     >
       <Cell :class="$style.photoCell">
@@ -53,7 +54,7 @@ import ErrorText from '../presenters/ErrorText';
 import StatusText from '../presenters/StatusText';
 import { Table, HeaderRow, HeaderCell, Row, Cell } from '../presenters/Table';
 
-import { POST_STATUSES } from '../../constants/post';
+import { POST_STATUSES } from '~/constants/post';
 
 export default {
 
@@ -117,6 +118,10 @@ export default {
 </script>
 
 <style module>
+.row:hover {
+  background: #f7f7f7;
+}
+
 .photoCell {
   width: 100px;
 }

@@ -78,12 +78,15 @@ class VKApi {
     return friends;
   }
 
-  async sendMessage(peerId, randomId, message) {
+  async sendMessage(peerId, randomId, message, attachmentIds = []) {
+    const attachment = attachmentIds.join(',');
+
     const response = await this.http.post('messages.send', {
       data: {
         peer_id: peerId,
         random_id: randomId,
         message,
+        attachment,
       },
     });
 
@@ -95,6 +98,42 @@ class VKApi {
 
     const result = data;
     return result;
+  }
+
+  async getAlbums() {
+    const response = await this.http.get('photos.getAlbums', {
+      params: {
+        need_covers: true,
+        need_system: true,
+      },
+    });
+
+    const { error, response: data } = response.data;
+
+    if (error !== undefined) {
+      throw new VKError(error);
+    }
+
+    const albums = data.items;
+    return albums;
+  }
+
+  async getAlbumPhotos(albumId) {
+    const response = await this.http.get('photos.get', {
+      params: {
+        album_id: albumId,
+        rev: 1,
+      },
+    });
+
+    const { error, response: data } = response.data;
+
+    if (error !== undefined) {
+      throw new VKError(error);
+    }
+
+    const photos = data.items;
+    return photos;
   }
 
 }

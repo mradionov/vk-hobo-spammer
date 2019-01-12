@@ -9,8 +9,8 @@ const messagesEN = require('./messages/en.json');
 const messagesRU = require('./messages/ru.json');
 
 const messages = {
-  [LOCALES.EN]: messagesEN,
-  [LOCALES.RU]: messagesRU,
+  [LOCALES.en]: messagesEN,
+  [LOCALES.ru]: messagesRU,
 };
 
 class ApplicationMenu extends EventEmitter {
@@ -56,17 +56,17 @@ class ApplicationMenu extends EventEmitter {
               {
                 label: this.translate('preferences.language.ru'),
                 type: 'radio',
-                checked: this.isLocale(LOCALES.RU),
+                checked: this.isLocale(LOCALES.ru),
                 click: () => {
-                  this.setLocale(LOCALES.RU);
+                  this.setLocale(LOCALES.ru);
                 },
               },
               {
                 label: this.translate('preferences.language.en'),
                 type: 'radio',
-                checked: this.isLocale(LOCALES.EN),
+                checked: this.isLocale(LOCALES.en),
                 click: () => {
-                  this.setLocale(LOCALES.EN);
+                  this.setLocale(LOCALES.en);
                 },
               }
             ],
