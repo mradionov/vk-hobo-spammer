@@ -1,7 +1,7 @@
 <template>
   <form @submit="handleSubmit">
     <Group>
-      <Label>Title</Label>
+      <Label>{{$t('title')}}</Label>
       <Field>
         <input
           type="text"
@@ -16,7 +16,7 @@
     <hr />
 
     <Group>
-      <Label>Users</Label>
+      <Label>{{$t('users')}}</Label>
       <Field>
         <div :class="$style.users">
           <div :class="$style.list">
@@ -29,14 +29,14 @@
               @select="toggleSelection"
             />
             <NoItemsMessage v-if="isFetching">
-              Loading ...
+              {{$t('loading')}}
             </NoItemsMessage>
             <NoItemsMessage v-if="isFetched && !hasAnyUsers">
-              No friends :(
+              {{$t('noItems')}}
             </NoItemsMessage>
           </div>
           <div :class="$style.filter">
-            <h3>Filter</h3>
+            <h3>{{$t('filter')}}</h3>
             <UserFilter
               @change="handleFilterChange"
               @reset="handleFilterReset"
@@ -52,7 +52,7 @@
       <Label />
       <Field>
         <Button type="submit">
-          Save
+          {{$t('save')}}
         </Button>
       </Field>
     </Group>
@@ -165,6 +165,27 @@ export default {
       return this.fields.userIds.includes(user.id);
     },
 
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        title: 'Title',
+        users: 'Users',
+        loading: 'Loading ...',
+        noItems: 'No friends :(',
+        filter: 'Filter',
+        save: 'Save',
+      },
+      ru: {
+        title: 'Название',
+        users: 'Пользователи',
+        loading: 'Загрузка ...',
+        noItems: 'Нет друзей :(',
+        filter: 'Фильтр',
+        save: 'Сохранить',
+      },
+    },
   },
 
 };

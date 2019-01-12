@@ -1,8 +1,8 @@
 <template>
   <div>
-    <p>You need to authorize with your VK account in order to send messages</p>
+    <p>{{$t('description')}}</p>
     <Button @click.native="handleAuthorize">
-      Authorize
+      {{$t('authorize')}}
     </Button>
   </div>
 </template>
@@ -27,6 +27,19 @@ export default {
         alert(err);
       }
     },
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        authorize: 'Authorize',
+        description: 'You need to authorize with your VK account in order to send messages',
+      },
+      ru: {
+        authorize: 'Авторизоваться',
+        description: 'Для отправки сообщений нужно авторизоваться с помощью ВК аккаунта',
+      },
+    }
   },
 };
 </script>

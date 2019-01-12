@@ -1,7 +1,7 @@
 <template>
   <div>
     <PageTitle>
-      Create Message
+      {{$t('pageTitle')}}
     </PageTitle>
     <MessageForm
       @submit="handleSubmit"
@@ -36,6 +36,17 @@ export default {
       }
     },
 
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        pageTitle: 'New message',
+      },
+      ru: {
+        pageTitle: 'Новое сообщение',
+      },
+    },
   },
 
 };

@@ -1,21 +1,21 @@
 const EventEmitter = require('events');
 
-const { Menu } = require('electron');
+const { Menu, shell } = require('electron');
+
+const { DEFAULT_LOCALE, LOCALES } = require('../constants/locale');
+const { SUPPORT_URLS } = require('../config/support');
 
 const messagesEN = require('./messages/en.json');
 const messagesRU = require('./messages/ru.json');
 
-const LOCALE_EN = 'en';
-const LOCALE_RU = 'ru';
-
 const messages = {
-  [LOCALE_EN]: messagesEN,
-  [LOCALE_RU]: messagesRU,
+  [LOCALES.EN]: messagesEN,
+  [LOCALES.RU]: messagesRU,
 };
 
 class ApplicationMenu extends EventEmitter {
 
-  constructor(defaultLocale = LOCALE_EN) {
+  constructor(defaultLocale = DEFAULT_LOCALE) {
     super();
 
     this.setLocale(defaultLocale);
@@ -42,22 +42,31 @@ class ApplicationMenu extends EventEmitter {
         label: this.translate('file'),
         submenu: [
           {
-            label: this.translate('file.language'),
+            label: this.translate('file.quit'),
+            role: 'quit',
+          },
+        ],
+      },
+      {
+        label: this.translate('preferences'),
+        submenu: [
+          {
+            label: this.translate('preferences.language'),
             submenu: [
               {
-                label: this.translate('file.language.ru'),
+                label: this.translate('preferences.language.ru'),
                 type: 'radio',
-                checked: this.isLocale(LOCALE_RU),
+                checked: this.isLocale(LOCALES.RU),
                 click: () => {
-                  this.setLocale(LOCALE_RU);
+                  this.setLocale(LOCALES.RU);
                 },
               },
               {
-                label: this.translate('file.language.en'),
+                label: this.translate('preferences.language.en'),
                 type: 'radio',
-                checked: this.isLocale(LOCALE_EN),
+                checked: this.isLocale(LOCALES.EN),
                 click: () => {
-                  this.setLocale(LOCALE_EN);
+                  this.setLocale(LOCALES.EN);
                 },
               }
             ],
@@ -66,15 +75,26 @@ class ApplicationMenu extends EventEmitter {
             type: 'separator',
           },
           {
-            label: this.translate('devtools'),
+            label: this.translate('preferences.devtools'),
             role: 'toggleDevTools',
           },
+        ],
+      },
+      {
+        role: 'help',
+        label: this.translate('help'),
+        submenu: [
           {
-            type: 'separator',
+            label: this.translate('help.support'),
+            click: () => {
+              this.openURL(SUPPORT_URLS.BUGS);
+            },
           },
           {
-            label: this.translate('quit'),
-            role: 'quit',
+            label: this.translate('help.about'),
+            click: () => {
+              this.openURL(SUPPORT_URLS.ABOUT);
+            },
           },
         ],
       },
@@ -99,6 +119,10 @@ class ApplicationMenu extends EventEmitter {
 
   isLocale(locale) {
     return this.locale === locale;
+  }
+
+  openURL(url) {
+    shell.openExternal(url);
   }
 
 }

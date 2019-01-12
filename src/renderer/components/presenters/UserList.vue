@@ -2,14 +2,14 @@
   <Table>
     <HeaderRow slot="header">
       <HeaderCell>
-        Selected
+        {{$t('selected')}}
         ({{selectedCount}} / {{totalCount}})
       </HeaderCell>
-      <HeaderCell>Photo</HeaderCell>
-      <HeaderCell>ID</HeaderCell>
-      <HeaderCell>Name</HeaderCell>
-      <HeaderCell>City</HeaderCell>
-      <HeaderCell>Status</HeaderCell>
+      <HeaderCell>{{$t('photo')}}</HeaderCell>
+      <HeaderCell>{{$t('id')}}</HeaderCell>
+      <HeaderCell>{{$t('name')}}</HeaderCell>
+      <HeaderCell>{{$t('city')}}</HeaderCell>
+      <HeaderCell>{{$t('status')}}</HeaderCell>
     </HeaderRow>
     <HeaderRow
       slot="header"
@@ -19,7 +19,7 @@
         colspan="6"
         :class="$style.filteredCell"
       >
-        Showing filtered results {{filteredCount}} / {{totalCount}}
+        {{$t('filter')}} {{filteredCount}} / {{totalCount}}
       </HeaderCell>
     </HeaderRow>
     <Row
@@ -197,6 +197,29 @@ export default {
       return true;
     },
 
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        selected: 'Selected',
+        photo: 'Photo',
+        id: 'ID',
+        name: 'Name',
+        city: 'City',
+        status: 'Status',
+        filter: 'Showing filtered results',
+      },
+      ru: {
+        selected: 'Выбрано',
+        photo: 'Фото',
+        id: 'ID',
+        name: 'Имя',
+        city: 'Город',
+        status: 'Статус',
+        filter: 'Показаны отфильтрованные результаты',
+      },
+    },
   },
 
 };

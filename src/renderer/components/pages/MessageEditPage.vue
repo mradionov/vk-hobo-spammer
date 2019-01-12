@@ -1,7 +1,7 @@
 <template>
   <div>
     <PageTitle>
-      Edit Message
+      {{$t('pageTitle')}}
     </PageTitle>
     <MessageForm
       :initialValues="message"
@@ -54,6 +54,17 @@ export default {
       }
     },
 
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        pageTitle: 'Edit message',
+      },
+      ru: {
+        pageTitle: 'Редактирование сообщения',
+      },
+    },
   },
 
 };

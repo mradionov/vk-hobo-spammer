@@ -1,13 +1,13 @@
 <template>
   <Table>
     <HeaderRow slot="header">
-      <HeaderCell>Title</HeaderCell>
-      <HeaderCell>Waiting</HeaderCell>
-      <HeaderCell>Sent</HeaderCell>
-      <HeaderCell>Failed</HeaderCell>
-      <HeaderCell>Total</HeaderCell>
-      <HeaderCell>Actions</HeaderCell>
-      <HeaderCell>Posts</HeaderCell>
+      <HeaderCell>{{$t('title')}}</HeaderCell>
+      <HeaderCell>{{$t('waiting')}}</HeaderCell>
+      <HeaderCell>{{$t('sent')}}</HeaderCell>
+      <HeaderCell>{{$t('failed')}}</HeaderCell>
+      <HeaderCell>{{$t('total')}}</HeaderCell>
+      <HeaderCell>{{$t('actions')}}</HeaderCell>
+      <HeaderCell>{{$t('posts')}}</HeaderCell>
     </HeaderRow>
     <Row
       v-for="bundle in bundles"
@@ -16,7 +16,7 @@
       <Cell :class="$style.titleCell">
         {{bundle.title}}
       </Cell>
-      <Cell :class="$style.countCell">
+      <Cell :class="$style.waitingCell">
         {{bundle.waitingPostsCount}}
       </Cell>
       <Cell :class="$style.sentCountCell">
@@ -25,7 +25,7 @@
       <Cell :class="$style.failedCountCell">
         {{bundle.failedPostsCount}}
       </Cell>
-      <Cell :class="$style.countCell">
+      <Cell :class="$style.totalCell">
         {{bundle.totalPostsCount}}
       </Cell>
       <Cell :class="$style.actionCell">
@@ -33,20 +33,20 @@
           :disabled="!canEdit"
           @click="$emit('edit', bundle)"
         >
-          Edit
+          {{$t('edit')}}
         </Button>
         <Button
           :disabled="!canRemove"
           @click="$emit('remove', bundle)"
         >
-          Remove
+          {{$t('remove')}}
         </Button>
       </Cell>
       <Cell :class="$style.postsCell">
         <Button
           @click="$emit('showPosts', bundle)"
         >
-          Show posts
+          {{$t('showPosts')}}
         </Button>
       </Cell>
     </Row>
@@ -85,6 +85,35 @@ export default {
     },
   },
 
+  i18n: {
+    messages: {
+      en: {
+        title: 'Title',
+        waiting: 'Waiting',
+        sent: 'Sent',
+        failed: 'Failed',
+        total: 'Total',
+        actions: 'Actions',
+        posts: 'Posts',
+        showPosts: 'Show posts',
+        edit: 'Edit',
+        remove: 'Remove',
+      },
+      ru: {
+        title: 'Название',
+        waiting: 'В ожидании',
+        sent: 'Отправлено',
+        failed: 'Ошибка',
+        total: 'Всего',
+        actions: 'Действия',
+        posts: 'Посты',
+        showPosts: 'Показать посты',
+        edit: 'Изменить',
+        remove: 'Удалить',
+      },
+    },
+  },
+
 };
 </script>
 
@@ -94,6 +123,10 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.waitingCell {
+  width: 100px;
 }
 
 .sentCountCell {
@@ -108,15 +141,15 @@ export default {
   width: 80px;
 }
 
-.countCell {
+.totalCell {
   width: 80px;
 }
 
 .actionCell {
-  width: 200px;
+  width: 250px;
 }
 
 .postsCell {
-  width: 135px;
+  width: 200px;
 }
 </style>

@@ -3,12 +3,23 @@
     :class="$style.container"
     @click="$router.go(-1)"
   >
-    Back
+    {{$t('back')}}
   </button>
 </template>
 
 <script>
 export default {
+
+  i18n: {
+    messages: {
+      en: {
+        back: 'Back',
+      },
+      ru: {
+        back: 'Назад',
+      },
+    },
+  },
 
 };
 </script>

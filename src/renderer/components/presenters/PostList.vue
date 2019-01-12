@@ -1,13 +1,13 @@
 <template>
   <Table>
     <HeaderRow slot="header">
-      <HeaderCell>User Photo</HeaderCell>
-      <HeaderCell>User ID</HeaderCell>
-      <HeaderCell>User Name</HeaderCell>
-      <HeaderCell>Status</HeaderCell>
-      <HeaderCell>Last error</HeaderCell>
-      <HeaderCell>Attempts</HeaderCell>
-      <HeaderCell>Actions</HeaderCell>
+      <HeaderCell>{{$t('userPhoto')}}</HeaderCell>
+      <HeaderCell>{{$t('userID')}}</HeaderCell>
+      <HeaderCell>{{$t('userName')}}</HeaderCell>
+      <HeaderCell>{{$t('status')}}</HeaderCell>
+      <HeaderCell>{{$t('lastError')}}</HeaderCell>
+      <HeaderCell>{{$t('attempts')}}</HeaderCell>
+      <HeaderCell>{{$t('actions')}}</HeaderCell>
     </HeaderRow>
     <Row
       v-for="post in posts"
@@ -36,10 +36,10 @@
           :disabled="!canSend(post)"
         >
           <span v-if="isFailed(post)">
-            Retry
+            {{$t('retry')}}
           </span>
           <span v-else>
-            Send
+            {{$t('send')}}
           </span>
         </Button>
       </Cell>
@@ -83,6 +83,33 @@ export default {
 
     isFailed(post) {
       return post.status === POST_STATUSES.failed;
+    },
+  },
+
+  i18n: {
+    messages: {
+      en: {
+        userPhoto: 'Photo',
+        userID: 'ID',
+        userName: 'Name',
+        status: 'Status',
+        lastError: 'Last error',
+        attempts: 'Attempts',
+        actions: 'Actions',
+        send: 'Send',
+        retry: 'Retry',
+      },
+      ru: {
+        userPhoto: 'Фото',
+        userID: 'ID',
+        userName: 'Имя',
+        status: 'Статус',
+        lastError: 'Последняя ошибка',
+        attempts: 'Попыток',
+        actions: 'Действия',
+        send: 'Отправить',
+        retry: 'Повторить',
+      },
     },
   },
 
