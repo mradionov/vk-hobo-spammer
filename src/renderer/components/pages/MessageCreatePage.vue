@@ -2,8 +2,19 @@
   <div>
     <PageTitle>
       {{$t('pageTitle')}}
+
+      <Button
+        slot="actions"
+        @click="$refs.form.requestSubmit()"
+      >
+        {{$t('save')}}
+      </Button>
     </PageTitle>
+
     <MessageForm
+      v-if="message"
+      ref="form"
+      :model="message"
       @submit="handleSubmit"
     />
   </div>
@@ -24,11 +35,21 @@ export default {
 
   inject: ['server'],
 
+  data() {
+    return {
+      message: null,
+    };
+  },
+
+  async mounted() {
+    this.message = await this.server.send('messages/new');
+  },
+
   methods: {
 
-    async handleSubmit(formData) {
+    async handleSubmit() {
       try {
-        const message = await this.server.send('messages/create', formData);
+        await this.server.send('messages/create', this.message);
         this.$router.push('/message/index');
       } catch (err) {
         console.error(err);
@@ -42,9 +63,11 @@ export default {
     messages: {
       en: {
         pageTitle: 'New message',
+        save: 'Save',
       },
       ru: {
         pageTitle: 'Новое сообщение',
+        save: 'Сохранить',
       },
     },
   },

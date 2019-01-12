@@ -64,7 +64,7 @@ app.on('ready', async () => {
   if (initialLocale === undefined) {
     const appLocale = app.getLocale();
     if (appLocale === 'ru-RU') {
-      initialLocale = LOCALES.RU;
+      initialLocale = LOCALES.ru;
     }
   }
 
@@ -110,8 +110,17 @@ router.route('profile', async (req, res) => {
     res.send(profile);
   } catch (err) {
     res.fail(err);
-    console.error(err);
   }
+});
+
+router.route('messages/new', async (req, res) => {
+  const messageData = {
+    title: '',
+    text: '',
+    attachments: [],
+  };
+
+  res.send(messageData);
 });
 
 router.route('messages/create', async (req, res) => {
@@ -401,6 +410,25 @@ router.route('users/index', async (req, res) => {
     });
 
     res.send(usersWithPosts);
+  } catch (err) {
+    res.fail(err);
+  }
+});
+
+router.route('albums/index', async (req, res) => {
+  try {
+    const albums = await vkApi.getAlbums();
+    res.send(albums);
+  } catch (err) {
+    res.fail(err);
+  }
+});
+
+router.route('photos/index', async (req, res) => {
+  const albumId = req.data.albumId;
+  try {
+    const photos = await vkApi.getAlbumPhotos(albumId);
+    res.send(photos);
   } catch (err) {
     res.fail(err);
   }

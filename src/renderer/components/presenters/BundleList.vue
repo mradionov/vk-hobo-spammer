@@ -11,6 +11,7 @@
     </HeaderRow>
     <Row
       v-for="bundle in bundles"
+      :class="$style.row"
       :key="bundle._id"
     >
       <Cell :class="$style.titleCell">
@@ -118,6 +119,10 @@ export default {
 </script>
 
 <style module>
+.row:hover {
+  background: #f7f7f7;
+}
+
 .titleCell {
   max-width: 70px;
   overflow: hidden;

@@ -68,7 +68,7 @@ import Checkbox from '../presenters/Checkbox';
 import StatusText from '../presenters/StatusText';
 import { Table, HeaderRow, HeaderCell, Row, Cell } from '../presenters/Table';
 
-import { POST_STATUSES } from '../../constants/post';
+import { POST_STATUSES } from '~/constants/post';
 
 export default {
 
@@ -259,7 +259,7 @@ export default {
 }
 
 .row:hover {
-  background: #e1e5eb;
+  background: #f7f7f7;
   cursor: pointer;
 }
 

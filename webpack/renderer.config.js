@@ -25,6 +25,9 @@ const config = {
     ],
   },
   resolve: {
+    alias: {
+      '~': path.join(rootDir, 'src'),
+    },
     extensions: ['.js', '.json', '.vue'],
   },
 };

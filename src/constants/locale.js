@@ -1,6 +1,6 @@
 exports.LOCALES = {
-  EN: 'en',
-  RU: 'ru',
+  en: 'en',
+  ru: 'ru',
 };
 
-exports.DEFAULT_LOCALE = this.LOCALES.RU;
+exports.DEFAULT_LOCALE = this.LOCALES.ru;

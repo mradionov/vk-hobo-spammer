@@ -50,8 +50,11 @@ class PostSender extends EventEmitter {
       const peerId = post.user.id;
       const randomId = message.randomId;
       const text = message.text;
+      const attachmentIds = message.attachments.map((attachment) => {
+        return `${attachment.type}${attachment.ownerId}_${attachment.id}`;
+      });
 
-      await this.vkApi.sendMessage(peerId, randomId, text);
+      await this.vkApi.sendMessage(peerId, randomId, text, attachmentIds);
 
       await this.db.posts.updateById(post._id, {
         $set: {
