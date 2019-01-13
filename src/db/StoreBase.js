@@ -58,20 +58,23 @@ class StoreBase {
     return this.remove({ _id: id });
   }
 
-  async find(query = {}) {
+  async find(query = {}, sort = {}) {
     return new Promise((resolve, reject) => {
-      this.ds.find(query, (err, docs) => {
-        if (err !== null) {
-          reject(err);
-        } else {
-          resolve(docs);
-        }
-      });
+      this.ds
+        .find(query)
+        .sort(sort)
+        .exec((err, docs) => {
+          if (err !== null) {
+            reject(err);
+          } else {
+            resolve(docs);
+          }
+        });
     });
   }
 
   async findAll() {
-    return this.find();
+    return this.find({}, { createdAt: -1 });
   }
 
   async findOne(query = {}) {
