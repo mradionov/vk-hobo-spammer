@@ -2,8 +2,16 @@
   <Section>
     <PageTitle>
       {{$t('pageTitle')}}
+
+      <Button
+        slot="actions"
+        @click="$refs.form.requestSubmit()"
+      >
+        {{$t('save')}}
+      </Button>
     </PageTitle>
     <BundleForm
+      ref="form"
       :users="users"
       @submit="handleSubmit"
     />
@@ -75,9 +83,11 @@ export default {
     messages: {
       en: {
         pageTitle: 'New bundle',
+        save: 'Save',
       },
       ru: {
         pageTitle: 'Новая рассылка',
+        save: 'Сохранить',
       },
     },
   },
