@@ -10,7 +10,7 @@ vk-hobo-spammer
 
 Скачать последнюю версию:
 
-- Windows - ???
+- Windows - [vk-hobo-spammer.0.2.0.exe](https://github.com/mradionov/vk-hobo-spammer/releases/download/v0.2.0/vk-hobo-spammer.0.2.0.exe)
 
 Версия для Windows распространяется как портируемая (portable) версия и не требует установки.
 
@@ -27,7 +27,7 @@ Features:
 
 Download the latest version:
 
-- Windows - ???
+- Windows - [vk-hobo-spammer.0.2.0.exe](https://github.com/mradionov/vk-hobo-spammer/releases/download/v0.2.0/vk-hobo-spammer.0.2.0.exe)
 
 Windows version is portable and does not require installation.
 
