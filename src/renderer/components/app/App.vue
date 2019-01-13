@@ -38,7 +38,6 @@ export default {
       this.$router.push({ name: 'messageIndex' });
     } catch (err) {
       console.error(err);
-      alert(err);
 
       this.$router.push({ name: 'auth' });
     }
