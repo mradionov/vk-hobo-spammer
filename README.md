@@ -1,7 +1,12 @@
 vk-hobo-spammer
 ===
 
-> Массовая отправка личных сообщений ВКонтакте
+> Десктопное приложение для массовой отправки личных сообщений ВКонтакте
+
+Возможности:
+- Создание рассылок для разного набора друзей
+- Прикрепление изображений из своих альбомов
+- Поддержка русского и английского языков интерфейса
 
 Скачать последнюю версию:
 
@@ -13,7 +18,12 @@ vk-hobo-spammer
 
 ---
 
-> VKontake send private messages in bulk
+> Desktop application for sending private messages in VKontake
+
+Features:
+- Send a message separately to different groups of users
+- Attach images from your albums
+- Russian and english interface language
 
 Download the latest version:
 
