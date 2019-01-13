@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Section>
     <PageTitle>
       {{$t('pageTitle')}}
       <div slot="actions">
@@ -26,7 +26,7 @@
     <NoItemsMessage v-if="!hasAnyBundles">
       {{$t('noItems')}}
     </NoItemsMessage>
-  </div>
+  </Section>
 </template>
 
 <script>
@@ -34,6 +34,7 @@ import BundleList from '../presenters/BundleList';
 import ButtonLink from '../presenters/ButtonLink';
 import NoItemsMessage from '../presenters/NoItemsMessage';
 import PageTitle from '../presenters/PageTitle';
+import Section from '../presenters/Section';
 
 export default {
 
@@ -42,6 +43,7 @@ export default {
     ButtonLink,
     NoItemsMessage,
     PageTitle,
+    Section,
   },
 
   inject: ['server'],
@@ -69,11 +71,11 @@ export default {
     this.fetchBundles();
     this.fetchPolicy();
 
-    this.server.listen('postSender/update', this.handlePostSenderUpdate);
+    this.server.listen('sender/update', this.handleSenderUpdate);
   },
 
   destroyed() {
-    this.server.unlisten('postSender/update', this.handlePostSenderUpdate);
+    this.server.unlisten('sender/update', this.handleSenderUpdate);
   },
 
   methods: {
@@ -90,7 +92,11 @@ export default {
 
     async fetchPolicy() {
       try {
-        this.policy = await this.server.send('bundles/policy');
+        const sender = await this.server.send('sender');
+        const isSending = sender.isInProgress || sender.hasQueueItems;
+
+        this.policy.canEdit = !isSending;
+        this.policy.canRemove = !isSending;
       } catch (err) {
         console.error(err);
         alert(err);
@@ -134,7 +140,7 @@ export default {
       });
     },
 
-    handlePostSenderUpdate() {
+    handleSenderUpdate() {
       this.fetchBundles();
       this.fetchPolicy();
     },

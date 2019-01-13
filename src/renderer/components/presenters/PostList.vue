@@ -78,8 +78,8 @@ export default {
 
   methods: {
     canSend(post) {
-      return post.status === POST_STATUSES.idle
-        || post.status === POST_STATUSES.failed;
+      return !post.isQueued && (post.status === POST_STATUSES.idle
+        || post.status === POST_STATUSES.failed);
     },
 
     isFailed(post) {

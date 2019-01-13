@@ -15,6 +15,11 @@ class PostSender extends EventEmitter {
     this.progressId = null;
   }
 
+  async init() {
+    this.queue = this.cache.get('queue') || [];
+    this.progressId = this.cache.get('progressId') || null;
+  }
+
   async attemptSend(postId) {
     const post = await this.db.posts.findById(postId);
 
@@ -27,22 +32,37 @@ class PostSender extends EventEmitter {
     }
 
     // If there is something currently sending, queue the post
-    if (this.progressId !== null) {
-      this.queue.push(post._id);
-      await this.db.posts.updateStatus(post._id, POST_STATUSES.queued);
-      this.emit('update');
+    if (this.isInProgress()) {
+      await this.addToQueue(post._id);
+      await this.db.posts.updateStatus(post._id, POST_STATUSES.idle);
       return;
     }
 
     const firstQueueId = this.queue[0];
     if (firstQueueId === post._id) {
-      this.queue.shift();
+      await this.shiftQueue();
     }
 
     await this.db.posts.updateStatus(post._id, POST_STATUSES.progress);
-    this.progressId = post._id;
-    this.emit('update');
+    await this.setProgress(post._id);
 
+    setTimeout(() => {
+      this.send(postId);
+    }, 1000);
+  }
+
+  attemptSendNext() {
+    if (this.queue.length === 0) {
+      return;
+    }
+
+    const queuedId = this.queue[0];
+
+    this.attemptSend(queuedId);
+  }
+
+  async send(postId) {
+    const post = await this.db.posts.findById(postId);
     const bundle = await this.db.bundles.findById(post.bundleId);
     const message = await this.db.messages.findById(bundle.messageId);
 
@@ -62,6 +82,14 @@ class PostSender extends EventEmitter {
           lastErrorCode: null,
         },
       });
+
+      await this.clearProgress();
+
+      // Continue with the next message only of previous succeeded
+      // Don't overwhelm VK api with requests
+      setTimeout(async () => {
+        this.attemptSendNext();
+      }, 1000);
     } catch (err) {
       await this.db.posts.updateById(post._id, {
         $set: {
@@ -72,29 +100,58 @@ class PostSender extends EventEmitter {
           attempts: 1,
         },
       });
-    }
 
-    this.progressId = null;
+      await this.clearQueue();
+      await this.clearProgress();
+    }
+  }
+
+  async addToQueue(postId) {
+    this.queue.push(postId);
+    await this.persist();
     this.emit('update');
-
-    // Don't overwhelm VK api with requests
-    setTimeout(async () => {
-      this.attemptSendNext();
-    }, 1000);
   }
 
-  attemptSendNext() {
-    if (this.queue.length === 0) {
-      return;
-    }
-
-    const queuedId = this.queue[0];
-
-    this.attemptSend(queuedId);
+  async shiftQueue() {
+    this.queue.shift();
+    await this.persist();
+    this.emit('update');
   }
 
-  isSending() {
-    return this.progressId !== null || this.queue.length > 0;
+  async clearQueue() {
+    this.queue = [];
+    await this.persist();
+    this.emit('update');
+  }
+
+  async setProgress(postId) {
+    this.progressId = postId;
+    await this.persist();
+    this.emit('update');
+  }
+
+  async clearProgress() {
+    this.progressId = null;
+    await this.persist();
+    this.emit('update');
+  }
+
+  async persist() {
+    this.cache.set('progressId', this.progressId);
+    this.cache.set('queue', this.queue);
+    await this.cache.save();
+  }
+
+  isInProgress() {
+    return this.progressId !== null;
+  }
+
+  hasQueueItems() {
+    return this.queue.length > 0;
+  }
+
+  hasInQueue(postId) {
+    return this.queue.includes(postId);
   }
 
 }

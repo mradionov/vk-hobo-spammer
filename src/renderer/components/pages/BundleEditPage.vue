@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Section>
     <PageTitle>
       {{$t('pageTitle')}}
     </PageTitle>
@@ -9,11 +9,12 @@
       :users="users"
       @submit="handleSubmit"
     />
-  </div>
+  </Section>
 </template>
 
 <script>
 import PageTitle from '../presenters/PageTitle';
+import Section from '../presenters/Section';
 
 import BundleForm from '../forms/BundleForm';
 
@@ -22,6 +23,7 @@ export default {
   components: {
     BundleForm,
     PageTitle,
+    Section,
   },
 
   inject: ['server'],

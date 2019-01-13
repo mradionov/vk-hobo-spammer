@@ -1,28 +1,36 @@
 <template>
   <Section>
-    {{$t('loading')}}
+    <PageTitle>
+      {{$t('title')}}
+    </PageTitle>
   </Section>
 </template>
 
 <script>
+import PageTitle from '../presenters/PageTitle';
 import Section from '../presenters/Section';
 
 export default {
 
   components: {
+    PageTitle,
     Section,
   },
 
   i18n: {
     messages: {
       en: {
-        loading: 'Loading...',
+        title: 'Progress',
       },
       ru: {
-        loading: 'Загрузка...',
+        title: 'Прогресс',
       },
     },
   },
 
 };
 </script>
+
+<style module>
+
+</style>
