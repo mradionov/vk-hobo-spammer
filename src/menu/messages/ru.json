@@ -6,6 +6,12 @@
   "preferences.language.ru": "Русский",
   "preferences.language.en": "English",
   "preferences.devtools": "Включить Инструменты Разработчика",
+  "preferences.reset": "Сбросить кеш и очистить базу данных",
+  "preferences.reset.title": "Сбросить кеш и очистить базу данных",
+  "preferences.reset.message": "Все данные будут удалены и их нельзя будет восстановить. Приложение будет закрыто после данной операции, откройте заново чтобы продолжить работу.",
+  "preferences.reset.label": "Подтвердить сброс данных",
+  "preferences.reset.cancel": "Отмена",
+  "preferences.reset.confirm": "Подтвердить",
   "help": "Помощь",
   "help.support": "Сообщить об ошибке",
   "help.about": "О программе"

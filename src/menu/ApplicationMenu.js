@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
 
-const { Menu, shell } = require('electron');
+const { dialog, Menu, shell } = require('electron');
 
 const { DEFAULT_LOCALE, LOCALES } = require('../constants/locale');
 const { SUPPORT_URLS } = require('../config/support');
@@ -15,8 +15,10 @@ const messages = {
 
 class ApplicationMenu extends EventEmitter {
 
-  constructor(defaultLocale = DEFAULT_LOCALE) {
+  constructor(defaultLocale = DEFAULT_LOCALE, onDataReset = () => {}) {
     super();
+
+    this.onDataReset = onDataReset;
 
     this.setLocale(defaultLocale);
   }
@@ -77,6 +79,37 @@ class ApplicationMenu extends EventEmitter {
           {
             label: this.translate('preferences.devtools'),
             role: 'toggleDevTools',
+          },
+          {
+            type: 'separator',
+          },
+          {
+            label: this.translate('preferences.reset'),
+            click: () => {
+              dialog.showMessageBox({
+                type: 'warning',
+                buttons: [
+                  this.translate('preferences.reset.cancel'),
+                  this.translate('preferences.reset.confirm'),
+                ],
+                defaultId: 0,
+                cancelId: 0,
+                title: this.translate('preferences.reset.title'),
+                message: this.translate('preferences.reset.message'),
+                checkboxLabel: this.translate('preferences.reset.label'),
+              }, (response, isChecked) => {
+                // Cancelled
+                if (response === 0) {
+                  return;
+                }
+                // Not confirmed
+                if (!isChecked) {
+                  return;
+                }
+
+                this.onDataReset();
+              });
+            },
           },
         ],
       },

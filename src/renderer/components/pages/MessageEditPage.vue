@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Section>
     <PageTitle>
       {{$t('pageTitle')}}
 
@@ -17,13 +17,14 @@
       :model="message"
       @submit="handleSubmit"
     />
-  </div>
+  </Section>
 </template>
 
 <script>
 import Button from '../presenters/Button';
 import MessageForm from '../forms/MessageForm';
 import PageTitle from '../presenters/PageTitle';
+import Section from '../presenters/Section';
 
 export default {
 
@@ -31,6 +32,7 @@ export default {
     Button,
     MessageForm,
     PageTitle,
+    Section,
   },
 
   inject: ['server'],

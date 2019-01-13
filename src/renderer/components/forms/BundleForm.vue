@@ -1,5 +1,5 @@
 <template>
-  <form @submit="handleSubmit">
+  <form ref="form">
     <Group>
       <Label>{{$t('title')}}</Label>
       <Field>
@@ -45,22 +45,10 @@
         </div>
       </Field>
     </Group>
-
-    <hr />
-
-    <Group>
-      <Label />
-      <Field>
-        <Button type="submit">
-          {{$t('save')}}
-        </Button>
-      </Field>
-    </Group>
   </form>
 </template>
 
 <script>
-import Button from '../presenters/Button';
 import NoItemsMessage from '../presenters/NoItemsMessage';
 import UserFilter from '../presenters/UserFilter';
 import UserList from '../presenters/UserList';
@@ -69,7 +57,6 @@ import { Group, Label, Field } from '../presenters/HorizontalForm';
 export default {
 
   components: {
-    Button,
     Field,
     Group,
     Label,
@@ -128,21 +115,6 @@ export default {
   },
 
   methods: {
-    handleSubmit() {
-      const userIds = this.fields.userIds.slice();
-      const users = this.users.filter((user) => {
-        return userIds.includes(user.id);
-      });
-
-      const formData = {
-        title: this.fields.title,
-        userIds,
-        users,
-      };
-
-      this.$emit('submit', formData);
-    },
-
     handleFilterChange(filter) {
       this.filter = filter;
     },
@@ -163,6 +135,27 @@ export default {
 
     isSelected(user) {
       return this.fields.userIds.includes(user.id);
+    },
+
+    requestSubmit() {
+      const form = this.$refs.form;
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const userIds = this.fields.userIds.slice();
+      const users = this.users.filter((user) => {
+        return userIds.includes(user.id);
+      });
+
+      const formData = {
+        title: this.fields.title,
+        userIds,
+        users,
+      };
+
+      this.$emit('submit', formData);
     },
 
   },

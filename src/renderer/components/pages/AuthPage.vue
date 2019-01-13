@@ -1,18 +1,20 @@
 <template>
-  <div>
+  <Section>
     <p>{{$t('description')}}</p>
     <Button @click.native="handleAuthorize">
       {{$t('authorize')}}
     </Button>
-  </div>
+  </Section>
 </template>
 
 <script>
 import Button from '../presenters/Button';
+import Section from '../presenters/Section';
 
 export default {
   components: {
     Button,
+    Section,
   },
 
   inject: ['server'],

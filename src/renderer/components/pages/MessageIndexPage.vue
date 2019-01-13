@@ -1,26 +1,28 @@
 <template>
   <div>
-    <PageTitle>
-      {{$t('pageTitle')}}
-      <ButtonLink
-        slot="actions"
-        :to="{ name: 'messageCreate' }"
-      >
-        {{$t('create')}}
-      </ButtonLink>
-    </PageTitle>
-    <MessageList
-      v-if="hasAnyMessages"
-      :canEdit="policy.canEdit"
-      :canRemove="policy.canRemove"
-      :messages="messages"
-      @edit="handleEdit"
-      @remove="handleRemove"
-      @showBundles="handleShowBundles"
-    />
-    <NoItemsMessage v-if="!hasAnyMessages">
-      {{$t('noItems')}}
-    </NoItemsMessage>
+    <Section>
+      <PageTitle>
+        {{$t('pageTitle')}}
+        <ButtonLink
+          slot="actions"
+          :to="{ name: 'messageCreate' }"
+        >
+          {{$t('create')}}
+        </ButtonLink>
+      </PageTitle>
+      <MessageList
+        v-if="hasAnyMessages"
+        :canEdit="policy.canEdit"
+        :canRemove="policy.canRemove"
+        :messages="messages"
+        @edit="handleEdit"
+        @remove="handleRemove"
+        @showBundles="handleShowBundles"
+      />
+      <NoItemsMessage v-if="!hasAnyMessages">
+        {{$t('noItems')}}
+      </NoItemsMessage>
+    </Section>
   </div>
 </template>
 
@@ -29,6 +31,8 @@ import ButtonLink from '../presenters/ButtonLink';
 import MessageList from '../presenters/MessageList';
 import NoItemsMessage from '../presenters/NoItemsMessage';
 import PageTitle from '../presenters/PageTitle';
+import ProgressSection from '../containers/ProgressSection';
+import Section from '../presenters/Section';
 
 export default {
 
@@ -37,6 +41,8 @@ export default {
     MessageList,
     NoItemsMessage,
     PageTitle,
+    ProgressSection,
+    Section,
   },
 
   inject: ['server'],
@@ -61,11 +67,11 @@ export default {
     this.fetchMessages();
     this.fetchPolicy();
 
-    this.server.listen('postSender/update', this.handlePostSenderUpdate);
+    this.server.listen('sender/update', this.handleSenderUpdate);
   },
 
   destroyed() {
-    this.server.unlisten('postSender/update', this.handlePostSenderUpdate);
+    this.server.unlisten('sender/update', this.handleSenderUpdate);
   },
 
   methods: {
@@ -80,7 +86,11 @@ export default {
 
     async fetchPolicy() {
       try {
-        this.policy = await this.server.send('messages/policy');
+        const sender = await this.server.send('sender');
+        const isSending = sender.isInProgress || sender.hasQueueItems;
+
+        this.policy.canEdit = !isSending;
+        this.policy.canRemove = !isSending;
       } catch (err) {
         console.error(err);
         alert(err);
@@ -123,7 +133,7 @@ export default {
       });
     },
 
-    handlePostSenderUpdate(update) {
+    handleSenderUpdate(update) {
       this.fetchMessages();
       this.fetchPolicy();
     },

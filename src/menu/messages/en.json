@@ -6,6 +6,12 @@
   "preferences.language.ru": "Русский",
   "preferences.language.en": "English",
   "preferences.devtools": "Toggle Developer Tools",
+  "preferences.reset": "Reset database and cache",
+  "preferences.reset.title": "Reset database and cache",
+  "preferences.reset.message": "All data will be removed and it can't be restored. Application will close after operation is complete. Open it after to continue working.",
+  "preferences.reset.label": "Confirm data reset",
+  "preferences.reset.cancel": "Cancel",
+  "preferences.reset.confirm": "Confirm",
   "help": "Help",
   "help.support": "Report a bug",
   "help.about": "About"

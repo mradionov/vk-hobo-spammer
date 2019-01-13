@@ -9,9 +9,7 @@
         v-if="$route.meta.canBack"
       />
     </div>
-    <div :class="$style.content">
-      <router-view />
-    </div>
+    <router-view />
   </div>
 </template>
 
@@ -104,13 +102,5 @@ hr {
   margin: 10px 0 0 20px;
   min-height: 30px;
   padding-left: 20px;
-}
-
-.content {
-  background: #fff;
-  border-radius: 2px;
-  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
-  margin: 10px 20px 20px 20px;
-  padding: 20px;
 }
 </style>

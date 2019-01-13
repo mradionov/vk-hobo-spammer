@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require('electron');
+const rmdir = require('rimraf');
 
 const MessagesStore = require('./db/MessagesStore');
 const BundlesStore = require('./db/BundlesStore');
@@ -15,14 +16,19 @@ const Cache = require('./lib/Cache');
 
 const { isDev } = require('./config/env');
 const {
-  CACHE_PATH,
+  APP_PATH,
+  CACHE_GENERAL_PATH, CACHE_QUEUE_PATH,
   DB_MESSAGES_PATH, DB_BUNDLES_PATH, DB_POSTS_PATH,
 } = require('./config/paths');
 
 const { VK_APP_ID } = require('./config/secrets');
 const { LOCALES } = require('./constants/locale');
 
-const cache = new Cache({ path: CACHE_PATH });
+const cache = new Cache({ path: CACHE_GENERAL_PATH });
+// Keep queue cache separate from the rest of the cache to avoid errors
+// in case of consequent I/O
+const queueCache = new Cache({ path: CACHE_QUEUE_PATH });
+
 const vkAuthService = new VKAuthService({ appId: VK_APP_ID });
 const router = new IPCRouterServer();
 
@@ -40,13 +46,23 @@ const db = {
   posts: postsStore,
 };
 
-const postSender = new PostSender(cache, db, vkApi);
-
+const postSender = new PostSender(queueCache, db, vkApi);
 
 let window;
 
+const handleDataReset = () => {
+  rmdir(APP_PATH, (err) => {
+    if (err) {
+      console.error(err);
+    }
+    app.quit();
+  });
+};
+
 app.on('ready', async () => {
   await cache.load();
+  await queueCache.load();
+  await postSender.init();
 
   const url = `file://${__dirname}/renderer/index.html`;
   window = new BrowserWindow();
@@ -65,10 +81,12 @@ app.on('ready', async () => {
     const appLocale = app.getLocale();
     if (appLocale === 'ru-RU') {
       initialLocale = LOCALES.ru;
+    } else {
+      initialLocale = LOCALES.en;
     }
   }
 
-  const menu = new ApplicationMenu(initialLocale);
+  const menu = new ApplicationMenu(initialLocale, handleDataReset);
 
   menu.on('change', async (locale) => {
     router.notify('locale/update');
@@ -78,7 +96,7 @@ app.on('ready', async () => {
 });
 
 postSender.on('update', () => {
-  router.notify('postSender/update');
+  router.notify('sender/update');
 });
 
 router.route('auth/login', async (req, res) => {
@@ -100,8 +118,17 @@ router.route('auth/logout', async (req, res) => {
 });
 
 router.route('locale', async (req, res) => {
-  const locale = cache.get('locale');
-  res.send(locale);
+  let initialLocale = cache.get('locale');
+  if (initialLocale === undefined) {
+    const appLocale = app.getLocale();
+    if (appLocale === 'ru-RU') {
+      initialLocale = LOCALES.ru;
+    } else {
+      initialLocale = LOCALES.en;
+    }
+  }
+
+  res.send(initialLocale);
 });
 
 router.route('profile', async (req, res) => {
@@ -187,18 +214,6 @@ router.route('messages/remove', async (req, res) => {
   } catch (err) {
     res.fail(err);
   }
-});
-
-router.route('messages/policy', async (req, res) => {
-  const canEdit = !postSender.isSending();
-  const canRemove = !postSender.isSending();
-
-  const policy = {
-    canEdit,
-    canRemove,
-  };
-
-  res.send(policy);
 });
 
 router.route('bundles/index', async (req, res) => {
@@ -335,24 +350,20 @@ router.route('bundles/remove', async (req, res) => {
   }
 });
 
-router.route('bundles/policy', async (req, res) => {
-  const canEdit = !postSender.isSending();
-  const canRemove = !postSender.isSending();
-
-  const policy = {
-    canEdit,
-    canRemove,
-  };
-
-  res.send(policy);
-});
-
 router.route('posts/index', async (req, res) => {
   const bundleId = req.data.bundleId;
 
   try {
     const posts = await postsStore.findAllByBundle(bundleId);
-    res.send(posts);
+    const postsWithQueue = posts.map((post) => {
+      const isQueued = postSender.hasInQueue(post._id);
+      return {
+        ...post,
+        isQueued,
+      };
+    });
+
+    res.send(postsWithQueue);
   } catch (err) {
     res.fail(err);
   }
@@ -432,4 +443,13 @@ router.route('photos/index', async (req, res) => {
   } catch (err) {
     res.fail(err);
   }
+});
+
+router.route('sender', async (req, res) => {
+  const responseData = {
+    hasQueueItems: postSender.hasQueueItems(),
+    isInProgress: postSender.isInProgress(),
+  };
+
+  res.send(responseData);
 });

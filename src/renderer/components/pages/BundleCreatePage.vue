@@ -1,18 +1,27 @@
 <template>
-  <div>
+  <Section>
     <PageTitle>
       {{$t('pageTitle')}}
+
+      <Button
+        slot="actions"
+        @click="$refs.form.requestSubmit()"
+      >
+        {{$t('save')}}
+      </Button>
     </PageTitle>
     <BundleForm
+      ref="form"
       :users="users"
       @submit="handleSubmit"
     />
-  </div>
+  </Section>
 </template>
 
 <script>
 import Button from '../presenters/Button';
 import PageTitle from '../presenters/PageTitle';
+import Section from '../presenters/Section';
 
 import BundleForm from '../forms/BundleForm';
 
@@ -22,6 +31,7 @@ export default {
     Button,
     PageTitle,
     BundleForm,
+    Section,
   },
 
   inject: ['server'],
@@ -60,7 +70,6 @@ export default {
 
       try {
         const bundle = await this.server.send('bundles/create', sendData);
-        console.log(bundle);
         this.$router.go(-1);
       } catch (err) {
         console.error(err);
@@ -74,9 +83,11 @@ export default {
     messages: {
       en: {
         pageTitle: 'New bundle',
+        save: 'Save',
       },
       ru: {
         pageTitle: 'Новая рассылка',
+        save: 'Сохранить',
       },
     },
   },

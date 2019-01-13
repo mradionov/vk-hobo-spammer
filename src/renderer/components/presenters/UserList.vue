@@ -239,7 +239,7 @@ export default {
 }
 
 .statusCell {
-  width: 80px;
+  width: 100px;
 }
 
 .idCell {
