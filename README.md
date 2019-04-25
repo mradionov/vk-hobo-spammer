@@ -1,6 +1,8 @@
 vk-hobo-spammer
 ===
 
+### Приложение больше не работает из-за новых ограничений АПИ ВК https://github.com/mradionov/vk-hobo-spammer/issues/31
+
 > Десктопное приложение для массовой отправки личных сообщений ВКонтакте
 
 Возможности:
@@ -17,6 +19,8 @@ vk-hobo-spammer
 Все версии программы доступны для скачивания на [странице релизов](https://github.com/mradionov/vk-hobo-spammer/releases).
 
 ---
+
+### App no longer working because of new VK API restrictions https://github.com/mradionov/vk-hobo-spammer/issues/31
 
 > Desktop application for sending private messages in VKontake
 
